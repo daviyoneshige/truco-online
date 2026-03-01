@@ -3,8 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Truco Paulista Online</title>
-<!-- Socket.io: biblioteca de comunicação em tempo real.
-     Quando o servidor está rodando, ele serve este arquivo automaticamente. -->
 <script src="/socket.io/socket.io.js"></script>
 <style>
   :root {
@@ -56,8 +54,9 @@
   /* ── MENU ── */
   .menu-logo   { font-size: 56px; }
   .menu-titulo { font-size: 32px; color: var(--dourado-cl); letter-spacing: 2px; }
-  .menu-sub    { font-size: 13px; color: var(--cinza); margin-bottom: 20px; }
-  .menu-user   { font-size: 13px; color: var(--cinza); margin-bottom: 8px; }
+  .menu-sub    { font-size: 13px; color: var(--cinza); margin-bottom: 8px; }
+  .menu-moedas { font-size: 15px; color: var(--dourado-cl); margin-bottom: 4px; }
+  .menu-stats  { font-size: 12px; color: var(--cinza); margin-bottom: 16px; }
   .menu-secao  { font-size: 11px; color: var(--cinza); text-transform: uppercase; letter-spacing: 2px; margin: 14px 0 8px; }
   .menu-btn {
     width: 300px; padding: 15px 20px; border-radius: 12px;
@@ -72,43 +71,130 @@
   .menu-sair { margin-top: 14px; font-size: 13px; color: var(--cinza); cursor: pointer; }
   .menu-sair:hover { color: var(--vermelho); }
 
+  /* ── PERFIL ── */
+  #tela-perfil { background: radial-gradient(ellipse at center, var(--verde) 0%, var(--verde-esc) 70%); overflow-y: auto; }
+
+  .perfil-card {
+    background: rgba(0,0,0,0.5); border: 2px solid var(--dourado);
+    border-radius: 16px; padding: 32px; width: 100%; max-width: 440px;
+    margin: 20px auto; text-align: center;
+  }
+
+  .perfil-avatar {
+    font-size: 64px; margin-bottom: 8px;
+    width: 90px; height: 90px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 10px; border: 3px solid var(--dourado);
+    background: rgba(0,0,0,0.3);
+  }
+
+  .perfil-nome   { font-size: 22px; color: var(--dourado-cl); }
+  .perfil-titulo { font-size: 13px; color: var(--cinza); margin-bottom: 12px; }
+
+  .perfil-moedas {
+    font-size: 28px; color: var(--dourado-cl);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin: 10px 0;
+  }
+
+  .perfil-stats {
+    display: flex; justify-content: center; gap: 24px;
+    margin: 14px 0; padding: 12px;
+    background: rgba(255,255,255,0.04); border-radius: 10px;
+  }
+  .stat-item { text-align: center; }
+  .stat-val  { font-size: 22px; color: var(--dourado-cl); }
+  .stat-lbl  { font-size: 10px; color: var(--cinza); text-transform: uppercase; letter-spacing: 1px; }
+
+  .perfil-back-atual {
+    margin: 12px 0; padding: 10px;
+    background: rgba(255,255,255,0.04); border-radius: 10px;
+    font-size: 13px; color: var(--cinza);
+  }
+
+  /* ── LOJA ── */
+  #tela-loja { background: radial-gradient(ellipse at center, var(--verde) 0%, var(--verde-esc) 70%); overflow-y: auto; }
+
+  .loja-header {
+    text-align: center; padding: 20px;
+    font-size: 22px; color: var(--dourado-cl);
+  }
+  .loja-moedas-disponiveis {
+    font-size: 14px; color: var(--dourado); margin-top: 4px;
+  }
+
+  .loja-secao { font-size: 12px; text-transform: uppercase; letter-spacing: 2px;
+    color: var(--cinza); padding: 0 16px 8px; }
+
+  .loja-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px; padding: 0 16px 16px;
+  }
+
+  .loja-item {
+    background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 16px 12px; text-align: center;
+    transition: all 0.2s;
+  }
+  .loja-item:hover { border-color: rgba(201,168,76,0.4); background: rgba(201,168,76,0.06); }
+  .loja-item.comprado { border-color: rgba(0,180,80,0.4); background: rgba(0,180,80,0.06); }
+  .loja-item.equipado { border-color: var(--dourado); background: rgba(201,168,76,0.1); }
+
+  .item-preview { font-size: 36px; margin-bottom: 8px; }
+  .item-nome    { font-size: 13px; margin-bottom: 4px; }
+  .item-desc    { font-size: 11px; color: var(--cinza); margin-bottom: 10px; }
+  .item-preco   { font-size: 13px; color: var(--dourado); margin-bottom: 8px; }
+
+  .item-btn {
+    width: 100%; padding: 7px; border-radius: 8px; border: none;
+    font-size: 12px; font-family: 'Georgia', serif; cursor: pointer; transition: all 0.2s;
+  }
+  .item-btn.comprar { background: var(--dourado); color: var(--verde-esc); font-weight: bold; }
+  .item-btn.comprar:hover { background: var(--dourado-cl); }
+  .item-btn.equipar { background: rgba(0,180,80,0.2); color: #4eff9a; border: 1px solid rgba(0,180,80,0.3); }
+  .item-btn.equipar:hover { background: rgba(0,180,80,0.3); }
+  .item-btn.equipado-btn { background: rgba(201,168,76,0.15); color: var(--dourado); border: 1px solid rgba(201,168,76,0.3); cursor: default; }
+  .item-btn.sem-moedas { background: rgba(255,255,255,0.05); color: var(--cinza); cursor: not-allowed; }
+
   /* ── AGUARDANDO ── */
   #tela-aguardando { background: radial-gradient(ellipse at center, var(--verde) 0%, var(--verde-esc) 70%); }
-  .aguard-card {
-    text-align: center; padding: 40px;
-    background: rgba(0,0,0,0.4); border: 1px solid rgba(201,168,76,0.3);
-    border-radius: 16px; max-width: 360px; width: 90%;
-  }
-  .aguard-spinner {
-    width: 50px; height: 50px; border: 4px solid rgba(201,168,76,0.2);
+  .aguard-card { text-align: center; padding: 40px; background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(201,168,76,0.3); border-radius: 16px; max-width: 360px; width: 90%; }
+  .aguard-spinner { width: 50px; height: 50px; border: 4px solid rgba(201,168,76,0.2);
     border-top-color: var(--dourado); border-radius: 50%;
-    animation: girar 1s linear infinite; margin: 16px auto;
-  }
+    animation: girar 1s linear infinite; margin: 16px auto; }
   @keyframes girar { to { transform: rotate(360deg); } }
 
   /* ── JOGO ── */
   #tela-jogo { background: radial-gradient(ellipse at center, var(--verde) 0%, var(--verde-esc) 100%); }
 
-  #topbar {
-    display: flex; justify-content: space-between; align-items: center;
+  #topbar { display: flex; justify-content: space-between; align-items: center;
     padding: 8px 16px; background: rgba(0,0,0,0.4);
-    border-bottom: 1px solid rgba(201,168,76,0.2); flex-shrink: 0;
-  }
+    border-bottom: 1px solid rgba(201,168,76,0.2); flex-shrink: 0; }
   .topo-titulo { color: var(--dourado-cl); font-size: 14px; }
   .topo-modo   { font-size: 11px; padding: 2px 10px; border-radius: 20px;
     background: rgba(0,180,80,0.15); color: #4eff9a; }
+  .topo-moedas { font-size: 12px; color: var(--dourado); }
 
-  #placar { display: flex; background: rgba(0,0,0,0.35); flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  #placar { display: flex; background: rgba(0,0,0,0.35); flex-shrink: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06); }
   .placar-time    { flex: 1; text-align: center; padding: 8px; }
   .placar-time.t1 { border-right: 1px solid rgba(255,255,255,0.07); border-top: 3px solid var(--azul); }
   .placar-time.t2 { border-top: 3px solid var(--vermelho); }
   .pt-nome { font-size: 10px; color: var(--cinza); text-transform: uppercase; letter-spacing: 1px; }
   .pt-pts  { font-size: 28px; color: var(--dourado-cl); line-height: 1.1; }
   .pt-rod  { font-size: 11px; color: var(--cinza); }
-  .placar-meio { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px 20px; font-size: 11px; color: var(--cinza); gap: 2px; }
+  .placar-meio { display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 4px 20px; font-size: 11px; color: var(--cinza); gap: 2px; }
 
-  #info-mao { display: flex; gap: 20px; justify-content: center; padding: 5px 0; flex-shrink: 0; font-size: 12px; color: var(--cinza); border-top: 1px solid rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.04); }
+  #info-mao { display: flex; gap: 20px; justify-content: center; padding: 5px 0; flex-shrink: 0;
+    font-size: 12px; color: var(--cinza);
+    border-top: 1px solid rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.04); }
   #info-mao span { color: var(--dourado); }
+
+  #aviso-turno { display: none; text-align: center; padding: 6px 16px; flex-shrink: 0;
+    background: rgba(201,168,76,0.1); border-bottom: 1px solid rgba(201,168,76,0.2);
+    font-size: 13px; color: var(--dourado-cl); }
 
   #log { text-align: center; padding: 5px 16px; font-size: 12px; color: var(--cinza); font-style: italic; flex-shrink: 0; }
 
@@ -139,13 +225,22 @@
   .carta-naipe { font-size: 24px; line-height: 1; }
   .carta-ct { position: absolute; top: 3px; left: 5px; font-size: 10px; line-height: 1.1; }
   .carta-cb { position: absolute; bottom: 3px; right: 5px; font-size: 10px; line-height: 1.1; transform: rotate(180deg); }
-  .carta.virada { background: linear-gradient(135deg, var(--verde), var(--verde-esc)); border: 2px solid var(--dourado); cursor: default; color: transparent; }
-  .carta.virada::after { content: '🂠'; font-size: 38px; color: rgba(201,168,76,0.4); }
-  .carta.virada:hover { transform: none; }
+
+  /* Virada: usa o back do jogador */
+  .carta.virada {
+    background: var(--back-cor, linear-gradient(135deg, var(--verde), var(--verde-esc)));
+    border: 2px solid var(--dourado); cursor: default; color: transparent;
+    font-size: 38px; display: flex; align-items: center; justify-content: center;
+  }
+  .carta.virada:hover { transform: none; box-shadow: 2px 4px 8px var(--sombra); }
 
   /* ── BOTÕES ── */
-  #acoes { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 10px 14px; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.05); flex-shrink: 0; }
-  .btn { padding: 9px 18px; border-radius: 8px; border: 1px solid rgba(201,168,76,0.35); background: rgba(201,168,76,0.08); color: var(--dourado-cl); font-size: 13px; font-family: 'Georgia', serif; cursor: pointer; transition: all 0.2s; }
+  #acoes { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    padding: 10px 14px; background: rgba(0,0,0,0.3);
+    border-top: 1px solid rgba(255,255,255,0.05); flex-shrink: 0; }
+  .btn { padding: 9px 18px; border-radius: 8px; border: 1px solid rgba(201,168,76,0.35);
+    background: rgba(201,168,76,0.08); color: var(--dourado-cl);
+    font-size: 13px; font-family: 'Georgia', serif; cursor: pointer; transition: all 0.2s; }
   .btn:hover    { background: rgba(201,168,76,0.2); border-color: var(--dourado); }
   .btn:disabled { opacity: 0.3; cursor: not-allowed; }
   .btn.d { background: var(--dourado); color: var(--verde-esc); font-weight: bold; border-color: var(--dourado); }
@@ -156,12 +251,30 @@
   .btn.v:hover { border-color: rgba(255,255,255,0.3); color: var(--branco); }
 
   /* ── MODAL ── */
-  #modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; }
+  #modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+    z-index: 100; align-items: center; justify-content: center; }
   #modal-overlay.vis { display: flex; }
-  #modal { background: #0d3318; border: 2px solid var(--dourado); border-radius: 16px; padding: 32px 28px; max-width: 360px; width: 90%; text-align: center; }
+  #modal { background: #0d3318; border: 2px solid var(--dourado); border-radius: 16px;
+    padding: 32px 28px; max-width: 360px; width: 90%; text-align: center; }
   #modal h3  { font-size: 22px; color: var(--dourado-cl); margin-bottom: 10px; }
   #modal p   { font-size: 14px; color: var(--cinza); margin-bottom: 24px; line-height: 1.6; }
   .modal-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+  /* ── ANIMAÇÃO DE MOEDAS ── */
+  .moeda-anim {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 32px; font-weight: bold; z-index: 200;
+    animation: subirMoeda 1.8s ease-out forwards; pointer-events: none;
+    text-shadow: 0 0 20px rgba(0,0,0,0.8);
+  }
+  .moeda-anim.positivo { color: #4eff9a; }
+  .moeda-anim.negativo { color: #ff7070; }
+  @keyframes subirMoeda {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    20%  { opacity: 1; transform: translate(-50%, -80%) scale(1.2); }
+    80%  { opacity: 1; transform: translate(-50%, -150%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -200%) scale(0.8); }
+  }
 
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
@@ -170,7 +283,7 @@
 </head>
 <body>
 
-<!-- TELA DE AUTH -->
+<!-- AUTH -->
 <div id="tela-auth" class="tela centro ativa">
   <div class="auth-card">
     <div id="painel-login">
@@ -189,7 +302,7 @@
     <div id="painel-cad" style="display:none">
       <div class="auth-logo">🃏</div>
       <div class="auth-titulo">Criar Conta</div>
-      <div class="auth-sub">Cadastre-se para jogar</div>
+      <div class="auth-sub">Novos jogadores ganham 1000 moedas! 🪙</div>
       <label class="auth-label">Usuário</label>
       <input class="auth-input" id="cad-nome" type="text" placeholder="escolha um nome" />
       <label class="auth-label">Senha</label>
@@ -204,41 +317,88 @@
 
 <!-- MENU -->
 <div id="tela-menu" class="tela centro">
-  <div class="menu-logo">🃏</div>
+  <div class="menu-logo" id="menu-avatar">🃏</div>
   <div class="menu-titulo">Truco Paulista</div>
-  <div class="menu-sub">Escolha o modo de jogo</div>
-  <div class="menu-user" id="menu-user"></div>
+  <div class="menu-moedas" id="menu-moedas">🪙 1000</div>
+  <div class="menu-stats"  id="menu-stats">0 vitórias · 0 derrotas</div>
 
-  <div class="menu-secao">🌐 Online (jogador real)</div>
-  <button class="menu-btn" onclick="entrarFilaOnline('1v1')">
+  <div class="menu-secao">🌐 Online</div>
+  <button class="menu-btn" onclick="entrarFilaOnline()">
     <span class="icone">🌐</span>
-    <div><div>1v1 Online</div><div class="desc">Jogue contra outro jogador real na internet</div></div>
+    <div><div>1v1 Online</div><div class="desc">Jogue contra outro jogador real</div></div>
   </button>
 
-  <div class="menu-secao">🤖 Contra o Bot</div>
+  <div class="menu-secao">🤖 Bot / Local</div>
   <button class="menu-btn" onclick="iniciarBot('1v1')">
     <span class="icone">🤖</span>
     <div><div>1v1 vs Bot</div><div class="desc">Você contra a inteligência artificial</div></div>
   </button>
-  <button class="menu-btn" onclick="iniciarBot('2v2')">
-    <span class="icone">🤖</span>
-    <div><div>2v2 vs Bots</div><div class="desc">Você e seu parceiro bot vs dois bots</div></div>
-  </button>
-
-  <div class="menu-secao">👥 Local (mesmo dispositivo)</div>
   <button class="menu-btn" onclick="iniciarLocal('1v1')">
     <span class="icone">🕹️</span>
     <div><div>1v1 Local</div><div class="desc">Dois jogadores no mesmo dispositivo</div></div>
+  </button>
+  <button class="menu-btn" onclick="iniciarBot('2v2')">
+    <span class="icone">🤖</span>
+    <div><div>2v2 vs Bots</div><div class="desc">Você e parceiro bot vs dois bots</div></div>
   </button>
   <button class="menu-btn" onclick="iniciarLocal('2v2')">
     <span class="icone">👥</span>
     <div><div>2v2 Local</div><div class="desc">Quatro jogadores no mesmo dispositivo</div></div>
   </button>
 
+  <div class="menu-secao">👤 Conta</div>
+  <button class="menu-btn" onclick="irTela('perfil')">
+    <span class="icone">👤</span>
+    <div><div>Meu Perfil</div><div class="desc">Veja suas estatísticas e conquistas</div></div>
+  </button>
+  <button class="menu-btn" onclick="irTela('loja')">
+    <span class="icone">🛒</span>
+    <div><div>Loja</div><div class="desc">Gaste suas moedas em itens exclusivos</div></div>
+  </button>
+
   <div class="menu-sair" onclick="sairConta()">Sair da conta</div>
 </div>
 
-<!-- AGUARDANDO ADVERSÁRIO -->
+<!-- PERFIL -->
+<div id="tela-perfil" class="tela">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:rgba(0,0,0,0.4);border-bottom:1px solid rgba(201,168,76,0.2)">
+    <span style="color:var(--dourado-cl);font-size:16px">👤 Meu Perfil</span>
+    <button class="btn v" onclick="irMenu()">← Menu</button>
+  </div>
+  <div style="overflow-y:auto;flex:1;display:flex;align-items:flex-start;justify-content:center;padding:20px">
+    <div class="perfil-card">
+      <div class="perfil-avatar" id="perfil-avatar">🃏</div>
+      <div class="perfil-nome"   id="perfil-nome">—</div>
+      <div class="perfil-titulo" id="perfil-titulo">Novato</div>
+      <div class="perfil-moedas">🪙 <span id="perfil-moedas">0</span></div>
+      <div class="perfil-stats">
+        <div class="stat-item"><div class="stat-val" id="stat-vit">0</div><div class="stat-lbl">Vitórias</div></div>
+        <div class="stat-item"><div class="stat-val" id="stat-der">0</div><div class="stat-lbl">Derrotas</div></div>
+        <div class="stat-item"><div class="stat-val" id="stat-tot">0</div><div class="stat-lbl">Partidas</div></div>
+        <div class="stat-item"><div class="stat-val" id="stat-tx">0%</div><div class="stat-lbl">Taxa vitória</div></div>
+      </div>
+      <div class="perfil-back-atual">
+        Back de carta atual: <span id="perfil-back-atual" style="color:var(--dourado-cl)">Padrão</span>
+      </div>
+      <button class="btn d" style="width:100%;margin-top:10px" onclick="irTela('loja')">🛒 Ir para a Loja</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOJA -->
+<div id="tela-loja" class="tela">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:rgba(0,0,0,0.4);border-bottom:1px solid rgba(201,168,76,0.2)">
+    <span style="color:var(--dourado-cl);font-size:16px">🛒 Loja</span>
+    <button class="btn v" onclick="irMenu()">← Menu</button>
+  </div>
+  <div class="loja-header">
+    Loja de Itens
+    <div class="loja-moedas-disponiveis">🪙 <span id="loja-moedas">0</span> moedas disponíveis</div>
+  </div>
+  <div id="loja-conteudo" style="padding-bottom:20px"></div>
+</div>
+
+<!-- AGUARDANDO -->
 <div id="tela-aguardando" class="tela centro">
   <div class="aguard-card">
     <div style="font-size:48px">🃏</div>
@@ -249,12 +409,12 @@
   </div>
 </div>
 
-<!-- TELA DO JOGO -->
+<!-- JOGO -->
 <div id="tela-jogo" class="tela">
   <div id="topbar">
     <div class="topo-titulo">🃏 Truco Paulista</div>
     <span class="topo-modo" id="topo-modo">Online</span>
-    <div style="font-size:12px;color:var(--cinza)" id="topo-user"></div>
+    <div class="topo-moedas" id="topo-moedas">🪙 0</div>
     <button class="btn v" onclick="irMenu()">← Menu</button>
   </div>
 
@@ -281,7 +441,7 @@
     <div>Mão vale: <span id="info-val">1</span> pt</div>
   </div>
 
-  <div id="aviso-turno" style="display:none;text-align:center;padding:6px 16px;background:rgba(201,168,76,0.1);border-bottom:1px solid rgba(201,168,76,0.2);font-size:13px;color:var(--dourado-cl);flex-shrink:0"></div>
+  <div id="aviso-turno"></div>
   <div id="log">Boa sorte!</div>
 
   <div class="area-adv">
@@ -317,45 +477,240 @@
 </div>
 
 <script>
-// ════════════════════════════════════════════════════════
-// CONEXÃO COM O SERVIDOR
-// ════════════════════════════════════════════════════════
-
-// Conecta ao servidor Socket.io. Quando o servidor estiver rodando,
-// esta linha abre a "linha telefônica" entre o navegador e o servidor.
-// Em modo local/bot, o socket existe mas não é usado.
 const socket = io();
 
-// ════════════════════════════════════════════════════════
-// ESTADO LOCAL
-// ════════════════════════════════════════════════════════
+// ══════════════════════════════════════════
+// SISTEMA DE PERFIL E MOEDAS
+// ══════════════════════════════════════════
 
-let nomeJog  = '';
-let meuTime  = '';   // 't1' ou 't2' no modo online
-let modoJogo = '';   // 'online', 'bot', 'local'
-let formatoJogo = ''; // '1v1' ou '2v2'
+// Itens disponíveis na loja
+const LOJA_ITENS = [
+  // Backs de carta (o verso das cartas)
+  { id: 'back_azul',     tipo: 'back', nome: 'Back Azul Royal',   desc: 'Verso azul elegante',     emoji: '🔵', back: 'linear-gradient(135deg,#1a3a6c,#0a1a3a)', preco: 300  },
+  { id: 'back_vermelho', tipo: 'back', nome: 'Back Vermelho',      desc: 'Verso vermelho intenso',  emoji: '🔴', back: 'linear-gradient(135deg,#6c1a1a,#3a0a0a)', preco: 300  },
+  { id: 'back_roxo',     tipo: 'back', nome: 'Back Roxo',          desc: 'Verso roxo misterioso',   emoji: '🟣', back: 'linear-gradient(135deg,#4a1a6c,#1a0a3a)', preco: 500  },
+  { id: 'back_verde',    tipo: 'back', nome: 'Back Verde Neon',    desc: 'Verso verde vibrante',    emoji: '🟢', back: 'linear-gradient(135deg,#0a4a1a,#042a0a)', preco: 500  },
+  { id: 'back_ouro',     tipo: 'back', nome: 'Back Dourado',       desc: 'Para os campeões',        emoji: '🥇', back: 'linear-gradient(135deg,#6c4a0a,#3a2a00)', preco: 1000 },
+  { id: 'back_galaxy',   tipo: 'back', nome: 'Back Galáxia',       desc: 'Espaço sideral',          emoji: '🌌', back: 'linear-gradient(135deg,#0a0a3a,#1a0a4a)', preco: 1500 },
+  // Avatares
+  { id: 'avatar_rei',    tipo: 'avatar', nome: 'Avatar Rei',       desc: 'Rei das cartas',          emoji: '👑', preco: 400  },
+  { id: 'avatar_bruxo',  tipo: 'avatar', nome: 'Avatar Bruxo',     desc: 'Mágico das apostas',      emoji: '🧙', preco: 600  },
+  { id: 'avatar_ninja',  tipo: 'avatar', nome: 'Avatar Ninja',     desc: 'Silencioso e letal',      emoji: '🥷', preco: 800  },
+  { id: 'avatar_robo',   tipo: 'avatar', nome: 'Avatar Robô',      desc: 'Calculista',              emoji: '🤖', preco: 1000 },
+  { id: 'avatar_alien',  tipo: 'avatar', nome: 'Avatar Alien',     desc: 'Fora deste mundo',        emoji: '👽', preco: 1200 },
+  { id: 'avatar_demonio',tipo: 'avatar', nome: 'Avatar Demônio',   desc: 'Assustador nas mesas',    emoji: '😈', preco: 2000 },
+];
 
-// No modo local/bot, guardamos o estado localmente
-// No modo online, o servidor manda o estado via Socket.io
-let estadoLocal = null;
+// Títulos por número de vitórias
+const TITULOS = [
+  { min: 0,   titulo: 'Novato' },
+  { min: 5,   titulo: 'Aprendiz' },
+  { min: 15,  titulo: 'Jogador' },
+  { min: 30,  titulo: 'Veterano' },
+  { min: 50,  titulo: 'Especialista' },
+  { min: 100, titulo: 'Mestre do Truco' },
+  { min: 200, titulo: 'Lendário' },
+];
 
-// ════════════════════════════════════════════════════════
+function getPerfil(nome) {
+  const perfis = JSON.parse(localStorage.getItem('tp_perfis') || '{}');
+  if (!perfis[nome]) {
+    // Novo jogador começa com 1000 moedas
+    perfis[nome] = { moedas: 1000, vitorias: 0, derrotas: 0, itens: [], backAtual: 'padrao', avatarAtual: '🃏' };
+    localStorage.setItem('tp_perfis', JSON.stringify(perfis));
+  }
+  return perfis[nome];
+}
+
+function salvarPerfil(nome, perfil) {
+  const perfis = JSON.parse(localStorage.getItem('tp_perfis') || '{}');
+  perfis[nome] = perfil;
+  localStorage.setItem('tp_perfis', JSON.stringify(perfis));
+}
+
+function getTitulo(vitorias) {
+  let titulo = TITULOS[0].titulo;
+  for (const t of TITULOS) { if (vitorias >= t.min) titulo = t.titulo; }
+  return titulo;
+}
+
+function atualizarMenuPerfil() {
+  if (!nomeJog) return;
+  const p = getPerfil(nomeJog);
+  document.getElementById('menu-moedas').textContent   = '🪙 ' + p.moedas;
+  document.getElementById('menu-stats').textContent    = p.vitorias + ' vitórias · ' + p.derrotas + ' derrotas';
+  document.getElementById('menu-avatar').textContent   = p.avatarAtual || '🃏';
+  document.getElementById('topo-moedas').textContent   = '🪙 ' + p.moedas;
+}
+
+function adicionarMoedas(qtd) {
+  if (!nomeJog) return;
+  const p = getPerfil(nomeJog);
+  p.moedas = Math.max(0, p.moedas + qtd);
+  salvarPerfil(nomeJog, p);
+  atualizarMenuPerfil();
+
+  // Animação visual de moedas
+  const el = document.createElement('div');
+  el.className = 'moeda-anim ' + (qtd > 0 ? 'positivo' : 'negativo');
+  el.textContent = (qtd > 0 ? '+' : '') + qtd + ' 🪙';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1800);
+}
+
+function registrarVitoria() {
+  if (!nomeJog) return;
+  const p = getPerfil(nomeJog);
+  p.vitorias++;
+  salvarPerfil(nomeJog, p);
+  adicionarMoedas(100);
+}
+
+function registrarDerrota() {
+  if (!nomeJog) return;
+  const p = getPerfil(nomeJog);
+  p.derrotas++;
+  salvarPerfil(nomeJog, p);
+  adicionarMoedas(-50);
+}
+
+function getBackAtual() {
+  if (!nomeJog) return null;
+  const p = getPerfil(nomeJog);
+  if (p.backAtual === 'padrao') return null;
+  const item = LOJA_ITENS.find(i => i.id === p.backAtual);
+  return item ? item.back : null;
+}
+
+// Renderiza a tela de perfil
+function renderizarPerfil() {
+  const p = getPerfil(nomeJog);
+  const total = p.vitorias + p.derrotas;
+  const taxa  = total > 0 ? Math.round((p.vitorias / total) * 100) : 0;
+
+  document.getElementById('perfil-avatar').textContent    = p.avatarAtual || '🃏';
+  document.getElementById('perfil-nome').textContent      = nomeJog;
+  document.getElementById('perfil-titulo').textContent    = getTitulo(p.vitorias);
+  document.getElementById('perfil-moedas').textContent    = p.moedas;
+  document.getElementById('stat-vit').textContent         = p.vitorias;
+  document.getElementById('stat-der').textContent         = p.derrotas;
+  document.getElementById('stat-tot').textContent         = total;
+  document.getElementById('stat-tx').textContent          = taxa + '%';
+
+  const backItem = p.backAtual !== 'padrao' ? LOJA_ITENS.find(i => i.id === p.backAtual) : null;
+  document.getElementById('perfil-back-atual').textContent = backItem ? backItem.nome : 'Padrão';
+}
+
+// Renderiza a loja
+function renderizarLoja() {
+  const p = getPerfil(nomeJog);
+  document.getElementById('loja-moedas').textContent = p.moedas;
+
+  const container = document.getElementById('loja-conteudo');
+  container.innerHTML = '';
+
+  // Agrupa por tipo
+  const tipos = [
+    { tipo: 'back',   label: '🃏 Backs de Carta' },
+    { tipo: 'avatar', label: '👤 Avatares'        },
+  ];
+
+  tipos.forEach(({ tipo, label }) => {
+    const secao = document.createElement('div');
+    secao.innerHTML = '<div class="loja-secao">' + label + '</div>';
+    const grid = document.createElement('div');
+    grid.className = 'loja-grid';
+
+    LOJA_ITENS.filter(i => i.tipo === tipo).forEach(item => {
+      const comprado = p.itens.includes(item.id);
+      const equipado = tipo === 'back'
+        ? p.backAtual === item.id
+        : p.avatarAtual === item.emoji;
+
+      const div = document.createElement('div');
+      div.className = 'loja-item' + (equipado ? ' equipado' : comprado ? ' comprado' : '');
+
+      let btnHtml = '';
+      if (equipado) {
+        btnHtml = '<button class="item-btn equipado-btn">✅ Equipado</button>';
+      } else if (comprado) {
+        btnHtml = '<button class="item-btn equipar" onclick="equiparItem(\'' + item.id + '\')">Equipar</button>';
+      } else if (p.moedas >= item.preco) {
+        btnHtml = '<button class="item-btn comprar" onclick="comprarItem(\'' + item.id + '\')">🪙 ' + item.preco + '</button>';
+      } else {
+        btnHtml = '<button class="item-btn sem-moedas">🪙 ' + item.preco + '</button>';
+      }
+
+      div.innerHTML = `
+        <div class="item-preview">${item.emoji}</div>
+        <div class="item-nome">${item.nome}</div>
+        <div class="item-desc">${item.desc}</div>
+        ${btnHtml}
+      `;
+      grid.appendChild(div);
+    });
+
+    secao.appendChild(grid);
+    container.appendChild(secao);
+  });
+}
+
+function comprarItem(id) {
+  const p = getPerfil(nomeJog);
+  const item = LOJA_ITENS.find(i => i.id === id);
+  if (!item || p.itens.includes(id)) return;
+  if (p.moedas < item.preco) return;
+
+  p.moedas -= item.preco;
+  p.itens.push(id);
+  salvarPerfil(nomeJog, p);
+  atualizarMenuPerfil();
+  renderizarLoja();
+
+  // Animação de compra
+  const el = document.createElement('div');
+  el.className = 'moeda-anim negativo';
+  el.textContent = '-' + item.preco + ' 🪙';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1800);
+}
+
+function equiparItem(id) {
+  const p = getPerfil(nomeJog);
+  const item = LOJA_ITENS.find(i => i.id === id);
+  if (!item || !p.itens.includes(id)) return;
+
+  if (item.tipo === 'back')   p.backAtual   = id;
+  if (item.tipo === 'avatar') p.avatarAtual = item.emoji;
+
+  salvarPerfil(nomeJog, p);
+  atualizarMenuPerfil();
+  renderizarLoja();
+  renderizarPerfil();
+}
+
+// ══════════════════════════════════════════
 // NAVEGAÇÃO
-// ════════════════════════════════════════════════════════
+// ══════════════════════════════════════════
 
 function irTela(qual) {
   document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
   document.getElementById('tela-' + qual).classList.add('ativa');
+  if (qual === 'perfil') renderizarPerfil();
+  if (qual === 'loja')   renderizarLoja();
 }
 
 function irMenu() {
   cancelarFila();
+  atualizarMenuPerfil();
   irTela('menu');
 }
 
-// ════════════════════════════════════════════════════════
+// ══════════════════════════════════════════
 // AUTH
-// ════════════════════════════════════════════════════════
+// ══════════════════════════════════════════
+
+let nomeJog = '', meuTime = '', modoJogo = '', formatoJogo = '';
 
 function alternarPainel(qual) {
   document.getElementById('painel-login').style.display = qual === 'login' ? 'block' : 'none';
@@ -376,8 +731,9 @@ function fazerCadastro() {
   if (users[nome]) return exibirMsg('msg-cad', 'Usuário já existe!', 'err');
   users[nome] = { nome, senha };
   localStorage.setItem('tp_users', JSON.stringify(users));
-  exibirMsg('msg-cad', '✅ Conta criada!', 'ok');
-  setTimeout(() => alternarPainel('login'), 1000);
+  getPerfil(nome); // cria o perfil com 1000 moedas
+  exibirMsg('msg-cad', '✅ Conta criada! Você ganhou 1000 moedas 🪙', 'ok');
+  setTimeout(() => alternarPainel('login'), 1500);
 }
 
 function fazerLogin() {
@@ -394,8 +750,9 @@ function fazerLogin() {
 
 function entrarComoLogado(nome) {
   nomeJog = nome;
-  document.getElementById('menu-user').textContent = '👤 ' + nome;
-  document.getElementById('topo-user').textContent  = '👤 ' + nome;
+  getPerfil(nome); // garante que o perfil existe
+  atualizarMenuPerfil();
+  document.getElementById('topo-moedas').textContent = '🪙 ' + getPerfil(nome).moedas;
   irTela('menu');
 }
 
@@ -411,58 +768,40 @@ function sairConta() {
 const jaLogado = localStorage.getItem('tp_logado');
 if (jaLogado) entrarComoLogado(jaLogado);
 
-// ════════════════════════════════════════════════════════
-// MODO ONLINE — COMUNICAÇÃO COM O SERVIDOR
-// ════════════════════════════════════════════════════════
+// ══════════════════════════════════════════
+// MODO ONLINE
+// ══════════════════════════════════════════
 
 function entrarFilaOnline() {
-  modoJogo = 'online';
-  formatoJogo = '1v1';
+  modoJogo = 'online'; formatoJogo = '1v1';
   irTela('aguardando');
-  // Avisa o servidor que este jogador quer entrar em uma partida
   socket.emit('entrar_fila', { nome: nomeJog });
 }
 
-function cancelarFila() {
-  socket.emit('cancelar_fila');
-}
+function cancelarFila() { socket.emit('cancelar_fila'); }
 
-// Servidor encontrou um adversário — partida começou!
 socket.on('partida_iniciada', ({ nomeT1, nomeT2 }) => {
-  // IMPORTANTE: definir modoJogo ANTES de ir para a tela do jogo.
-  // Sem isso, quando o primeiro 'estado_atualizado' chegar, o guard
-  // "if (modoJogo !== 'online') return" bloqueava a renderização
-  // e as cartas nunca apareciam.
   modoJogo = 'online';
   meuTime  = nomeT1 === nomeJog ? 't1' : 't2';
-
   document.getElementById('topo-modo').textContent = '🌐 Online';
   document.getElementById('nome-t1').textContent   = nomeT1;
   document.getElementById('nome-t2').textContent   = nomeT2;
   irTela('jogo');
 });
 
-// Servidor mandou o estado atualizado do jogo
-socket.on('estado_atualizado', (estado) => {
+socket.on('estado_atualizado', (est) => {
   if (modoJogo !== 'online') return;
-  renderizarOnline(estado);
+  renderizarOnline(est);
 });
 
-// Adversário desconectou
 socket.on('adversario_desconectou', () => {
-  abrirModal('😢 Adversário saiu', 'O adversário desconectou da partida.', [{ label: 'Voltar ao menu', acao: irMenu }]);
+  abrirModal('😢 Adversário saiu', 'O adversário desconectou da partida.',
+    [{ label: 'Voltar ao menu', acao: irMenu }]);
 });
 
-// Ainda esperando adversário
-socket.on('aguardando_adversario', () => {
-  irTela('aguardando');
-});
+socket.on('aguardando_adversario', () => { irTela('aguardando'); });
 
-// Renderiza o jogo a partir do estado recebido do servidor.
-// Agora o servidor manda 'meuTime', 'minhasCartas' e 'qtdAdversario'
-// diretamente — não precisamos mais descobrir qual time somos pelo nome.
 function renderizarOnline(est) {
-  // Atualiza meuTime com o que o servidor mandou (mais confiável)
   meuTime = est.meuTime;
 
   document.getElementById('pts-t1').textContent     = est.pontos.t1;
@@ -473,41 +812,35 @@ function renderizarOnline(est) {
   document.getElementById('info-val').textContent   = est.valMao;
   document.getElementById('log').textContent        = est.log;
 
-  const SIM    = { O:'♦', E:'♠', C:'♥', P:'♣' };
+  const SIM = { O:'♦', E:'♠', C:'♥', P:'♣' };
   const NAIPES = ['O','E','C','P'];
-
   if (est.vira) {
     document.getElementById('info-vira').textContent = est.vira.valor + SIM[est.vira.naipe];
     const manStr = [...NAIPES].reverse().map(n => est.manilha + SIM[n]).join(' > ');
     document.getElementById('info-man').textContent  = est.manilha + ' (' + manStr + ')';
   }
 
-  // O servidor já nos diz exatamente quais são nossas cartas e quantas o adversário tem
-  const minhasCartas  = est.minhasCartas;
-  const advTime       = meuTime === 't1' ? 't2' : 't1';
-  const nomeAdv       = est.nomes[advTime];
-  const nomeEu        = est.nomes[meuTime];
-  const minhaVez      = est.turno === meuTime && !est.aguardandoTruco;
+  const advTime  = meuTime === 't1' ? 't2' : 't1';
+  const nomeAdv  = est.nomes[advTime];
+  const nomeEu   = est.nomes[meuTime];
+  const minhaVez = est.turno === meuTime && !est.aguardandoTruco;
 
   document.getElementById('label-jog').textContent = nomeEu + (minhaVez ? ' ◀' : '');
   document.getElementById('label-jog').className   = 'area-label' + (minhaVez ? ' ativo' : '');
   document.getElementById('label-adv').textContent = (est.turno === advTime ? '▶ ' : '') + nomeAdv;
   document.getElementById('label-adv').className   = 'area-label' + (est.turno === advTime ? ' ativo' : '');
 
-  // Minhas cartas — clicáveis apenas quando for minha vez
   const jogEl = document.getElementById('cartas-jog');
   jogEl.innerHTML = '';
-  minhasCartas.forEach((carta, i) => {
+  est.minhasCartas.forEach((carta, i) => {
     jogEl.appendChild(mkCarta(carta, minhaVez, est.manilha,
       minhaVez ? () => socket.emit('jogar_carta', { idx: i }) : null));
   });
 
-  // Cartas do adversário — sempre viradas, mostramos só a quantidade
   const advEl = document.getElementById('cartas-adv');
   advEl.innerHTML = '';
   for (let i = 0; i < est.qtdAdversario; i++) advEl.appendChild(mkVirada());
 
-  // Mesa — mostra as cartas que já foram jogadas nesta rodada
   const mesaEl = document.getElementById('mesa');
   mesaEl.innerHTML = '';
   est.mesa.forEach(m => {
@@ -522,13 +855,10 @@ function renderizarOnline(est) {
     mesaEl.appendChild(wrap);
   });
 
-  // Botões de truco
   const SEQ = ['nenhum','truco','seis','nove','doze'];
   const NOM = { truco:'TRUCO', seis:'SEIS', nove:'NOVE', doze:'DOZE' };
   const idx = SEQ.indexOf(est.estadoTruco);
   const pode = idx < SEQ.length - 1 && !est.aguardandoTruco && minhaVez;
-
-  // Quem PEDIU o truco vê mensagem de espera. Quem RECEBEU vê os botões de resposta.
   const euPediTruco   = est.aguardandoTruco && est.quemPediuTruco === meuTime;
   const euRecebiTruco = est.aguardandoTruco && est.quemPediuTruco !== meuTime;
 
@@ -536,48 +866,32 @@ function renderizarOnline(est) {
   document.getElementById('btn-truco').style.display    = est.aguardandoTruco ? 'none'         : 'inline-block';
   document.getElementById('btn-aceitar').style.display  = euRecebiTruco       ? 'inline-block' : 'none';
   document.getElementById('btn-correr').style.display   = euRecebiTruco       ? 'inline-block' : 'none';
-
   if (euPediTruco) setLog('Aguardando resposta do adversário...');
   if (pode) document.getElementById('btn-truco').textContent = NOM[SEQ[idx + 1]] + '!';
 
-  // Mão de onze — só o adversário do time com 11 decide
   if (est.aguardandoMaoOnze && est.turno !== meuTime) {
     const timeOnze = est.pontos.t1 === 11 ? 't1' : 't2';
-    abrirModal('🃏 Mão de Onze!',
-      est.nomes[timeOnze] + ' tem 11 pontos. Você aceita jogar? (mão vale 3 pts)',
-      [
-        { label: '✅ Aceitar', acao: () => { fecharModal(); socket.emit('resposta_mao_onze', { aceita: true }); } },
-        { label: '❌ Recusar', acao: () => { fecharModal(); socket.emit('resposta_mao_onze', { aceita: false }); } }
-      ]
-    );
+    abrirModal('🃏 Mão de Onze!', est.nomes[timeOnze] + ' tem 11 pontos. Você aceita jogar? (mão vale 3 pts)',
+      [{ label: '✅ Aceitar', acao: () => { fecharModal(); socket.emit('resposta_mao_onze', { aceita: true }); } },
+       { label: '❌ Recusar', acao: () => { fecharModal(); socket.emit('resposta_mao_onze', { aceita: false }); } }]);
   }
 
-  // Fim de jogo
   if (est.fim) {
     const venceu = est.vencedor === meuTime;
-    abrirModal(venceu ? '🏆 Você venceu!' : '😢 Você perdeu!',
-      venceu ? 'Parabéns! Você chegou a 12 pontos!' : 'O adversário chegou a 12 pontos.',
+    if (venceu) registrarVitoria(); else registrarDerrota();
+    abrirModal(venceu ? '🏆 Você venceu! +100 🪙' : '😢 Você perdeu! -50 🪙',
+      venceu ? 'Parabéns! +100 moedas adicionadas.' : 'Não desanime! -50 moedas.',
       [{ label: 'Voltar ao menu', acao: irMenu }]);
   }
 }
 
-// Botões online
-function pedirTruco() {
-  if (modoJogo === 'online') { socket.emit('pedir_truco'); }
-  else pedirTrucoLocal();
-}
-function aceitarTruco() {
-  if (modoJogo === 'online') { socket.emit('aceitar_truco'); }
-  else aceitarTrucoLocal();
-}
-function correrTruco() {
-  if (modoJogo === 'online') { socket.emit('correr_truco'); }
-  else correrTrucoLocal();
-}
+function pedirTruco()   { modoJogo === 'online' ? socket.emit('pedir_truco')   : pedirTrucoLocal(); }
+function aceitarTruco() { modoJogo === 'online' ? socket.emit('aceitar_truco') : aceitarTrucoLocal(); }
+function correrTruco()  { modoJogo === 'online' ? socket.emit('correr_truco')  : correrTrucoLocal(); }
 
-// ════════════════════════════════════════════════════════
-// MODO LOCAL E BOT — lógica roda no navegador mesmo
-// ════════════════════════════════════════════════════════
+// ══════════════════════════════════════════
+// MODO LOCAL E BOT
+// ══════════════════════════════════════════
 
 const VALS   = ['4','5','6','7','Q','J','K','A','2','3'];
 const NAIPES = ['O','E','C','P'];
@@ -586,21 +900,16 @@ const SEQ_T  = ['nenhum','truco','seis','nove','doze'];
 const VALS_T = { nenhum:1, truco:3, seis:6, nove:9, doze:12 };
 const NOM_T  = { truco:'TRUCO', seis:'SEIS', nove:'NOVE', doze:'DOZE' };
 
-let nomesTimes = { t1:[], t2:[] };
-let idxAtual   = { t1:0, t2:0 };
-let ptsT  = { t1:0, t2:0 };
-let maoJ  = { t1:[], t2:[] };
-let mesa  = [];
-let vira  = null, manV = '';
-let turno = 't1';
-let rodG  = { t1:0, t2:0 };
-let valM  = 1, estT = 'nenhum';
-let agTr  = false, qpTr = '', vPrimRod = '', nRod = 1;
+let nomesTimes = { t1:[], t2:[] }, idxAtual = { t1:0, t2:0 };
+let ptsT = { t1:0, t2:0 }, maoJ = { t1:[], t2:[] }, mesa = [];
+let vira = null, manV = '', turno = 't1';
+let rodG = { t1:0, t2:0 }, valM = 1, estT = 'nenhum';
+let agTr = false, qpTr = '', vPrimRod = '', nRod = 1;
 
 function iniciarBot(formato) {
   modoJogo = 'bot'; formatoJogo = formato;
-  nomesTimes.t1 = formato === '1v1' ? [nomeJog]              : [nomeJog, 'Parceiro'];
-  nomesTimes.t2 = formato === '1v1' ? ['Bot']                : ['Bot A', 'Bot B'];
+  nomesTimes.t1 = formato === '1v1' ? [nomeJog]         : [nomeJog, 'Parceiro'];
+  nomesTimes.t2 = formato === '1v1' ? ['Bot']           : ['Bot A', 'Bot B'];
   idxAtual = { t1:0, t2:0 }; ptsT = { t1:0, t2:0 };
   document.getElementById('topo-modo').textContent = formato + ' vs Bot';
   document.getElementById('nome-t1').textContent   = formato === '1v1' ? nomeJog : '🔵 Time Azul';
@@ -610,28 +919,23 @@ function iniciarBot(formato) {
 
 function iniciarLocal(formato) {
   modoJogo = 'local'; formatoJogo = formato;
-  nomesTimes.t1 = formato === '1v1' ? [nomeJog]         : [nomeJog, 'Parceiro A'];
-  nomesTimes.t2 = formato === '1v1' ? ['Jogador 2']     : ['J1-B', 'J2-B'];
+  nomesTimes.t1 = formato === '1v1' ? [nomeJog]      : [nomeJog, 'Parceiro A'];
+  nomesTimes.t2 = formato === '1v1' ? ['Jogador 2']  : ['J1-B', 'J2-B'];
   idxAtual = { t1:0, t2:0 }; ptsT = { t1:0, t2:0 };
   document.getElementById('topo-modo').textContent = formato + ' Local';
-  document.getElementById('nome-t1').textContent   = formato === '1v1' ? nomeJog        : '🔵 Time Azul';
-  document.getElementById('nome-t2').textContent   = formato === '1v1' ? 'Jogador 2'    : '🔴 Time Vermelho';
+  document.getElementById('nome-t1').textContent   = formato === '1v1' ? nomeJog       : '🔵 Time Azul';
+  document.getElementById('nome-t2').textContent   = formato === '1v1' ? 'Jogador 2'   : '🔴 Time Vermelho';
   irTela('jogo'); novaMaoLocal();
 }
 
 function criarBaralho() {
   const deck = [];
   for (const v of VALS) for (const n of NAIPES) deck.push({ valor: v, naipe: n });
-  for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]];
-  }
+  for (let i = deck.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; }
   return deck;
 }
 
-function forca(c) {
-  if (c.valor === manV) return 100 + NAIPES.indexOf(c.naipe);
-  return VALS.indexOf(c.valor);
-}
+function forca(c) { return c.valor === manV ? 100 + NAIPES.indexOf(c.naipe) : VALS.indexOf(c.valor); }
 function isMan(c) { return c.valor === manV; }
 function cNome(c) { return c.valor + SIM[c.naipe]; }
 function nomeAtual(t) { return nomesTimes[t][idxAtual[t]]; }
@@ -640,10 +944,10 @@ function novaMaoLocal() {
   fecharModal();
   if ((ptsT.t1 === 11 || ptsT.t2 === 11) && ptsT.t1 !== ptsT.t2) { maoDeOnzeLocal(); return; }
   const deck = criarBaralho();
-  maoJ.t1 = deck.splice(0, 3); maoJ.t2 = deck.splice(0, 3); vira = deck[0];
-  manV = VALS[(VALS.indexOf(vira.valor) + 1) % VALS.length];
-  mesa = []; turno = 't1'; rodG = { t1:0, t2:0 }; valM = 1;
-  estT = 'nenhum'; agTr = false; qpTr = ''; vPrimRod = ''; nRod = 1;
+  maoJ.t1 = deck.splice(0,3); maoJ.t2 = deck.splice(0,3); vira = deck[0];
+  manV = VALS[(VALS.indexOf(vira.valor)+1)%VALS.length];
+  mesa=[]; turno='t1'; rodG={t1:0,t2:0}; valM=1;
+  estT='nenhum'; agTr=false; qpTr=''; vPrimRod=''; nRod=1;
   setLog('Nova mão! ' + nomeAtual('t1') + ' vs ' + nomeAtual('t2') + ' — Vira: ' + cNome(vira));
   renderizarLocal();
   if (modoJogo === 'bot' && turno === 't2') setTimeout(botJogar, 800);
@@ -651,28 +955,27 @@ function novaMaoLocal() {
 
 function maoDeOnzeLocal() {
   const deck = criarBaralho();
-  maoJ.t1 = deck.splice(0, 3); maoJ.t2 = deck.splice(0, 3); vira = deck[0];
-  manV = VALS[(VALS.indexOf(vira.valor) + 1) % VALS.length];
-  mesa = []; turno = 't1'; rodG = { t1:0, t2:0 }; valM = 3;
-  estT = 'nenhum'; agTr = false; qpTr = ''; vPrimRod = ''; nRod = 1;
+  maoJ.t1 = deck.splice(0,3); maoJ.t2 = deck.splice(0,3); vira = deck[0];
+  manV = VALS[(VALS.indexOf(vira.valor)+1)%VALS.length];
+  mesa=[]; turno='t1'; rodG={t1:0,t2:0}; valM=3;
+  estT='nenhum'; agTr=false; qpTr=''; vPrimRod=''; nRod=1;
   renderizarLocal();
   const tOnze = ptsT.t1 === 11 ? 't1' : 't2';
-  const tAdv  = tOnze === 't1' ? 't2' : 't1';
   const nOnze = formatoJogo === '1v1' ? nomesTimes[tOnze][0] : (tOnze==='t1'?'Time Azul':'Time Vermelho');
-  if (modoJogo === 'bot' && tAdv === 't2') {
+  if (modoJogo === 'bot' && tOnze === 't2') {
     const aceita = Math.random() > 0.4;
     setLog('Mão de Onze! Bot ' + (aceita ? 'aceitou.' : 'recusou.'));
     if (!aceita) { ptsT[tOnze] += 1; if (!verificarFimJogoLocal()) setTimeout(novaMaoLocal, 1500); }
     else renderizarLocal(); return;
   }
   abrirModal('🃏 Mão de Onze!', nOnze + ' tem 11 pts. Aceita jogar? (mão vale 3 pts)',
-    [{ label: '✅ Aceitar', acao: () => { fecharModal(); renderizarLocal(); } },
-     { label: '❌ Recusar', acao: () => { fecharModal(); ptsT[tOnze] += 1; if (!verificarFimJogoLocal()) setTimeout(novaMaoLocal, 800); } }]);
+    [{ label:'✅ Aceitar', acao:() => { fecharModal(); renderizarLocal(); } },
+     { label:'❌ Recusar', acao:() => { fecharModal(); ptsT[tOnze]+=1; if(!verificarFimJogoLocal()) setTimeout(novaMaoLocal,800); } }]);
 }
 
 function jogarLocal(idx, time) {
   if (agTr || turno !== time) return;
-  const carta = maoJ[time].splice(idx, 1)[0];
+  const carta = maoJ[time].splice(idx,1)[0];
   mesa.push({ time, carta }); turno = time === 't1' ? 't2' : 't1';
   renderizarLocal();
   if (mesa.length === 2) setTimeout(resolverRodadaLocal, 700);
@@ -680,148 +983,149 @@ function jogarLocal(idx, time) {
 }
 
 function resolverRodadaLocal() {
-  const p1 = mesa.find(m => m.time === 't1'), p2 = mesa.find(m => m.time === 't2');
+  const p1 = mesa.find(m=>m.time==='t1'), p2 = mesa.find(m=>m.time==='t2');
   const f1 = forca(p1.carta), f2 = forca(p2.carta);
   let venc = '';
-  if (f1 > f2) venc = 't1'; else if (f2 > f1) venc = 't2';
+  if (f1>f2) venc='t1'; else if (f2>f1) venc='t2';
   if (venc) rodG[venc]++;
-  if (nRod === 1) vPrimRod = venc;
-  nRod++; mesa = [];
-  if (venc) turno = venc;
+  if (nRod===1) vPrimRod=venc;
+  nRod++; mesa=[];
+  if (venc) turno=venc;
 
   const fimRes = checarFimMaoLocal();
   if (fimRes !== null) {
-    if (fimRes) { ptsT[fimRes] += valM; setLog((fimRes==='t1'?'🔵':'🔴') + ' ' + (formatoJogo==='1v1'?nomesTimes[fimRes][0]:'Time '+(fimRes==='t1'?'Azul':'Vermelho')) + ' venceu a mão! +' + valM + ' pt(s)'); }
-    else setLog('Empate total — ninguém pontua.');
+    if (fimRes) {
+      ptsT[fimRes] += valM;
+      setLog((fimRes==='t1'?'🔵':'🔴')+' '+(formatoJogo==='1v1'?nomesTimes[fimRes][0]:'Time '+(fimRes==='t1'?'Azul':'Vermelho'))+' venceu a mão! +'+valM+' pt(s)');
+    } else setLog('Empate total — ninguém pontua.');
     renderizarLocal();
     if (verificarFimJogoLocal()) return;
-    if (formatoJogo === '2v2') { idxAtual.t1 = (idxAtual.t1+1)%2; idxAtual.t2 = (idxAtual.t2+1)%2; }
+    if (formatoJogo==='2v2') { idxAtual.t1=(idxAtual.t1+1)%2; idxAtual.t2=(idxAtual.t2+1)%2; }
     setTimeout(novaMaoLocal, 1800); return;
   }
-  setLog(venc ? (nomeAtual(venc) + ' venceu a rodada!') : 'Empate na rodada!');
+  setLog(venc ? (nomeAtual(venc)+' venceu a rodada!') : 'Empate na rodada!');
   renderizarLocal();
-  if (modoJogo === 'bot' && turno === 't2') setTimeout(botJogar, 800);
+  if (modoJogo==='bot' && turno==='t2') setTimeout(botJogar, 800);
 }
 
 function checarFimMaoLocal() {
-  if (rodG.t1 >= 2) return 't1'; if (rodG.t2 >= 2) return 't2';
-  if (nRod > 3) { if (rodG.t1 > rodG.t2) return 't1'; if (rodG.t2 > rodG.t1) return 't2'; return vPrimRod || ''; }
-  if (nRod === 3 && vPrimRod === '') { if (rodG.t1 === 1) return 't1'; if (rodG.t2 === 1) return 't2'; }
+  if (rodG.t1>=2) return 't1'; if (rodG.t2>=2) return 't2';
+  if (nRod>3) { if(rodG.t1>rodG.t2) return 't1'; if(rodG.t2>rodG.t1) return 't2'; return vPrimRod||''; }
+  if (nRod===3 && vPrimRod==='') { if(rodG.t1===1) return 't1'; if(rodG.t2===1) return 't2'; }
   return null;
 }
 
 function verificarFimJogoLocal() {
-  if (ptsT.t1 >= 12) { abrirModal('🏆 Vitória!', (formatoJogo==='1v1'?nomeJog:'Time Azul') + ' chegou a 12 pontos!', [{label:'Jogar de novo', acao:() => { fecharModal(); ptsT={t1:0,t2:0}; idxAtual={t1:0,t2:0}; novaMaoLocal(); }}]); return true; }
-  if (ptsT.t2 >= 12) { abrirModal('😢 Derrota!', (formatoJogo==='1v1'?nomesTimes.t2[0]:'Time Vermelho') + ' chegou a 12 pontos.', [{label:'Jogar de novo', acao:() => { fecharModal(); ptsT={t1:0,t2:0}; idxAtual={t1:0,t2:0}; novaMaoLocal(); }}]); return true; }
+  const nomesT1 = formatoJogo==='1v1' ? nomeJog : 'Time Azul';
+  const nomesT2 = formatoJogo==='1v1' ? nomesTimes.t2[0] : 'Time Vermelho';
+  if (ptsT.t1>=12) {
+    registrarVitoria();
+    abrirModal('🏆 Vitória! +100 🪙', nomesT1+' chegou a 12 pontos!',
+      [{label:'Jogar de novo', acao:() => { fecharModal(); ptsT={t1:0,t2:0}; idxAtual={t1:0,t2:0}; novaMaoLocal(); }}]);
+    return true;
+  }
+  if (ptsT.t2>=12) {
+    registrarDerrota();
+    abrirModal('😢 Derrota! -50 🪙', nomesT2+' chegou a 12 pontos.',
+      [{label:'Jogar de novo', acao:() => { fecharModal(); ptsT={t1:0,t2:0}; idxAtual={t1:0,t2:0}; novaMaoLocal(); }}]);
+    return true;
+  }
   return false;
 }
 
 function pedirTrucoLocal() {
   if (agTr) return;
-  const idx = SEQ_T.indexOf(estT); if (idx >= SEQ_T.length - 1) return;
-  const prox = SEQ_T[idx + 1]; qpTr = turno; agTr = true; estT = prox; valM = VALS_T[prox];
-  setLog(nomeAtual(qpTr) + ' pediu ' + NOM_T[prox] + '!'); renderizarLocal();
-  if (modoJogo === 'bot') setTimeout(() => { const f = maoJ.t2.reduce((s,c) => s+forca(c), 0); (f>8||Math.random()>0.45) ? aceitarTrucoLocal() : correrTrucoLocal(); }, 900);
+  const idx = SEQ_T.indexOf(estT); if (idx>=SEQ_T.length-1) return;
+  const prox = SEQ_T[idx+1]; qpTr=turno; agTr=true; estT=prox; valM=VALS_T[prox];
+  setLog(nomeAtual(qpTr)+' pediu '+NOM_T[prox]+'!'); renderizarLocal();
+  if (modoJogo==='bot') setTimeout(() => { const f=maoJ.t2.reduce((s,c)=>s+forca(c),0); (f>8||Math.random()>0.45)?aceitarTrucoLocal():correrTrucoLocal(); }, 900);
 }
 
 function aceitarTrucoLocal() {
-  if (!agTr) return; agTr = false;
-  setLog('Truco aceito! Mão vale ' + valM + ' pt(s).'); renderizarLocal();
-  if (modoJogo === 'bot' && turno === 't2') setTimeout(botJogar, 600);
+  if (!agTr) return; agTr=false;
+  setLog('Truco aceito! Mão vale '+valM+' pt(s).'); renderizarLocal();
+  if (modoJogo==='bot' && turno==='t2') setTimeout(botJogar, 600);
 }
 
 function correrTrucoLocal() {
-  if (!agTr) return; agTr = false;
-  const valAnt = VALS_T[SEQ_T[SEQ_T.indexOf(estT)-1]]; ptsT[qpTr] += valAnt;
-  setLog('Alguém correu! ' + nomeAtual(qpTr) + ' ganha ' + valAnt + ' pt(s).');
+  if (!agTr) return; agTr=false;
+  const valAnt=VALS_T[SEQ_T[SEQ_T.indexOf(estT)-1]]; ptsT[qpTr]+=valAnt;
+  setLog('Alguém correu! '+nomeAtual(qpTr)+' ganha '+valAnt+' pt(s).');
   renderizarLocal(); if (!verificarFimJogoLocal()) setTimeout(novaMaoLocal, 1500);
 }
 
 function botJogar() {
-  if (modoJogo !== 'bot' || turno !== 't2' || agTr || maoJ.t2.length === 0) return;
-  let idxMin = 0;
-  for (let i = 1; i < maoJ.t2.length; i++) { if (forca(maoJ.t2[i]) < forca(maoJ.t2[idxMin])) idxMin = i; }
-  jogarLocal(idxMin, 't2');
+  if (modoJogo!=='bot'||turno!=='t2'||agTr||maoJ.t2.length===0) return;
+  let idxMin=0;
+  for (let i=1;i<maoJ.t2.length;i++) { if(forca(maoJ.t2[i])<forca(maoJ.t2[idxMin])) idxMin=i; }
+  jogarLocal(idxMin,'t2');
 }
 
 function renderizarLocal() {
   document.getElementById('pts-t1').textContent    = ptsT.t1;
   document.getElementById('pts-t2').textContent    = ptsT.t2;
-  document.getElementById('rod-t1').textContent    = rodG.t1 > 0 ? '●'.repeat(rodG.t1) : '—';
-  document.getElementById('rod-t2').textContent    = rodG.t2 > 0 ? '●'.repeat(rodG.t2) : '—';
-  document.getElementById('val-mao-pl').textContent = valM + ' pt';
+  document.getElementById('rod-t1').textContent    = rodG.t1>0?'●'.repeat(rodG.t1):'—';
+  document.getElementById('rod-t2').textContent    = rodG.t2>0?'●'.repeat(rodG.t2):'—';
+  document.getElementById('val-mao-pl').textContent = valM+' pt';
   document.getElementById('info-val').textContent   = valM;
+  document.getElementById('topo-moedas').textContent = '🪙 ' + getPerfil(nomeJog).moedas;
   if (vira) {
     document.getElementById('info-vira').textContent = cNome(vira);
-    const manStr = [...NAIPES].reverse().map(n => manV + SIM[n]).join(' > ');
-    document.getElementById('info-man').textContent  = manV + ' (' + manStr + ')';
+    const manStr = [...NAIPES].reverse().map(n=>manV+SIM[n]).join(' > ');
+    document.getElementById('info-man').textContent  = manV+' ('+manStr+')';
   }
 
-  const jA1 = nomeAtual('t1'), jA2 = nomeAtual('t2');
+  const jA1=nomeAtual('t1'), jA2=nomeAtual('t2');
   document.getElementById('label-adv').textContent = (turno==='t2'?'▶ ':'')+jA2;
   document.getElementById('label-adv').className   = 'area-label'+(turno==='t2'?' ativo':'');
   document.getElementById('label-jog').textContent = jA1+(turno==='t1'?' ◀':'');
   document.getElementById('label-jog').className   = 'area-label'+(turno==='t1'?' ativo':'');
 
-  // Aviso de turno no modo local
   const aviso = document.getElementById('aviso-turno');
-  if (modoJogo === 'local') {
-    aviso.style.display = 'block';
-    aviso.textContent = turno === 't1'
-      ? '🟢 Vez de ' + jA1 + ' — ' + jA2 + ', olhe para outro lado!'
-      : '🟡 Vez de ' + jA2 + ' — ' + jA1 + ', olhe para outro lado!';
-  } else { aviso.style.display = 'none'; }
+  if (modoJogo==='local') {
+    aviso.style.display='block';
+    aviso.textContent = turno==='t1'
+      ? '🟢 Vez de '+jA1+' — '+jA2+', olhe para outro lado!'
+      : '🟡 Vez de '+jA2+' — '+jA1+', olhe para outro lado!';
+  } else aviso.style.display='none';
 
-  // Cartas do adversário
   const advEl = document.getElementById('cartas-adv');
-  advEl.innerHTML = '';
-  if (modoJogo === 'bot') {
-    maoJ.t2.forEach(() => advEl.appendChild(mkVirada()));
-  } else if (turno === 't1' && !agTr) {
-    maoJ.t2.forEach(() => advEl.appendChild(mkVirada()));
-  } else {
-    const pode = turno === 't2' && !agTr;
-    maoJ.t2.forEach((carta, i) => advEl.appendChild(mkCarta(carta, pode, manV, pode ? () => jogarLocal(i, 't2') : null)));
-  }
+  advEl.innerHTML='';
+  if (modoJogo==='bot') { maoJ.t2.forEach(()=>advEl.appendChild(mkVirada())); }
+  else if (turno==='t1'&&!agTr) { maoJ.t2.forEach(()=>advEl.appendChild(mkVirada())); }
+  else { const pode=turno==='t2'&&!agTr; maoJ.t2.forEach((c,i)=>advEl.appendChild(mkCarta(c,pode,manV,pode?()=>jogarLocal(i,'t2'):null))); }
 
-  // Cartas do jogador
   const jogEl = document.getElementById('cartas-jog');
-  jogEl.innerHTML = '';
-  if (modoJogo === 'local' && turno === 't2' && !agTr) {
-    maoJ.t1.forEach(() => jogEl.appendChild(mkVirada()));
-  } else {
-    const pode = turno === 't1' && !agTr;
-    maoJ.t1.forEach((carta, i) => jogEl.appendChild(mkCarta(carta, pode, manV, pode ? () => jogarLocal(i, 't1') : null)));
-  }
+  jogEl.innerHTML='';
+  if (modoJogo==='local'&&turno==='t2'&&!agTr) { maoJ.t1.forEach(()=>jogEl.appendChild(mkVirada())); }
+  else { const pode=turno==='t1'&&!agTr; maoJ.t1.forEach((c,i)=>jogEl.appendChild(mkCarta(c,pode,manV,pode?()=>jogarLocal(i,'t1'):null))); }
 
-  // Mesa
   const mesaEl = document.getElementById('mesa');
-  mesaEl.innerHTML = '';
+  mesaEl.innerHTML='';
   mesa.forEach(m => {
-    const wrap = document.createElement('div'); wrap.style.cssText = 'text-align:center';
-    const el = mkCarta(m.carta, false, manV, null); el.classList.add('inativa');
-    const lbl = document.createElement('div'); lbl.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.4);margin-top:4px';
-    lbl.textContent = m.time === 't1' ? jA1 : jA2;
+    const wrap=document.createElement('div'); wrap.style.cssText='text-align:center';
+    const el=mkCarta(m.carta,false,manV,null); el.classList.add('inativa');
+    const lbl=document.createElement('div'); lbl.style.cssText='font-size:10px;color:rgba(255,255,255,0.4);margin-top:4px';
+    lbl.textContent=m.time==='t1'?jA1:jA2;
     wrap.appendChild(el); wrap.appendChild(lbl); mesaEl.appendChild(wrap);
   });
 
-  // Botões
-  const idx = SEQ_T.indexOf(estT); const pode = idx < SEQ_T.length-1 && !agTr;
-  document.getElementById('btn-truco').disabled    = !pode;
-  document.getElementById('btn-truco').style.display   = agTr ? 'none'        : 'inline-block';
-  document.getElementById('btn-aceitar').style.display = agTr ? 'inline-block' : 'none';
-  document.getElementById('btn-correr').style.display  = agTr ? 'inline-block' : 'none';
-  if (pode) document.getElementById('btn-truco').textContent = NOM_T[SEQ_T[idx+1]] + '!';
+  const idx=SEQ_T.indexOf(estT); const pode=idx<SEQ_T.length-1&&!agTr;
+  document.getElementById('btn-truco').disabled         = !pode;
+  document.getElementById('btn-truco').style.display    = agTr?'none':'inline-block';
+  document.getElementById('btn-aceitar').style.display  = agTr?'inline-block':'none';
+  document.getElementById('btn-correr').style.display   = agTr?'inline-block':'none';
+  if (pode) document.getElementById('btn-truco').textContent = NOM_T[SEQ_T[idx+1]]+'!';
 }
 
-// ════════════════════════════════════════════════════════
-// ELEMENTOS DE CARTA (usados pelos dois modos)
-// ════════════════════════════════════════════════════════
+// ══════════════════════════════════════════
+// ELEMENTOS DE CARTA
+// ══════════════════════════════════════════
 
 function mkCarta(carta, clicavel, manilha, fn) {
-  const v = carta.naipe === 'O' || carta.naipe === 'C';
+  const v = carta.naipe==='O'||carta.naipe==='C';
   const div = document.createElement('div');
-  div.className = 'carta' + (v?' vermelha':'') + (carta.valor===manilha?' manilha':'') + (!clicavel?' inativa':'');
+  div.className = 'carta'+(v?' vermelha':'')+(carta.valor===manilha?' manilha':'')+(!clicavel?' inativa':'');
   const s = SIM[carta.naipe];
   div.innerHTML = `<div class="carta-ct">${carta.valor}<br>${s}</div>
     <div class="carta-valor">${carta.valor}</div><div class="carta-naipe">${s}</div>
@@ -831,21 +1135,26 @@ function mkCarta(carta, clicavel, manilha, fn) {
 }
 
 function mkVirada() {
-  const div = document.createElement('div'); div.className = 'carta virada'; return div;
+  const back = getBackAtual();
+  const div = document.createElement('div');
+  div.className = 'carta virada';
+  if (back) div.style.background = back;
+  div.textContent = '🂠';
+  return div;
 }
 
-// ════════════════════════════════════════════════════════
-// MODAL e LOG
-// ════════════════════════════════════════════════════════
+// ══════════════════════════════════════════
+// MODAL E LOG
+// ══════════════════════════════════════════
 
 function abrirModal(titulo, texto, botoes) {
   document.getElementById('modal-h').textContent = titulo;
   document.getElementById('modal-p').textContent = texto;
-  const el = document.getElementById('modal-btns'); el.innerHTML = '';
-  botoes.forEach((b, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'btn' + (i===0?' d':'');
-    btn.textContent = b.label; btn.onclick = b.acao; el.appendChild(btn);
+  const el = document.getElementById('modal-btns'); el.innerHTML='';
+  botoes.forEach((b,i)=>{
+    const btn=document.createElement('button');
+    btn.className='btn'+(i===0?' d':'');
+    btn.textContent=b.label; btn.onclick=b.acao; el.appendChild(btn);
   });
   document.getElementById('modal-overlay').classList.add('vis');
 }
