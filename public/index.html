@@ -276,6 +276,48 @@
     100% { opacity: 0; transform: translate(-50%, -200%) scale(0.8); }
   }
 
+
+  /* ── ADMIN ── */
+  #tela-admin { background: radial-gradient(ellipse at center, #1a0a2a 0%, #0a0010 70%); }
+  .admin-card {
+    background: rgba(0,0,0,0.6); border: 2px solid #a855f7;
+    border-radius: 16px; padding: 28px; width: 100%; max-width: 440px;
+    margin: 20px auto;
+  }
+  .admin-titulo { font-size: 20px; color: #d8b4fe; margin-bottom: 16px; text-align:center; }
+  .admin-input { width:100%; padding:10px 14px; border-radius:8px;
+    border:1px solid rgba(168,85,247,0.4); background:rgba(255,255,255,0.07);
+    color:var(--branco); font-size:14px; font-family:'Georgia',serif;
+    margin-bottom:10px; outline:none; }
+  .admin-input:focus { border-color:#a855f7; }
+  .admin-btn { width:100%; padding:11px; border-radius:8px; border:none;
+    background:#a855f7; color:#fff; font-size:14px; font-family:'Georgia',serif;
+    font-weight:bold; cursor:pointer; margin-bottom:8px; transition:background 0.2s; }
+  .admin-btn:hover { background:#9333ea; }
+  .admin-log { font-size:12px; color:#a855f7; min-height:20px; text-align:center; margin-top:6px; }
+
+  /* ── AMIGOS ── */
+  #tela-amigos { background: radial-gradient(ellipse at center, var(--verde) 0%, var(--verde-esc) 70%); overflow-y:auto; }
+  .amigos-card { background:rgba(0,0,0,0.5); border:2px solid var(--dourado);
+    border-radius:16px; padding:24px; width:100%; max-width:440px; margin:20px auto; }
+  .amigos-secao { font-size:11px; text-transform:uppercase; letter-spacing:2px;
+    color:var(--cinza); margin:14px 0 8px; }
+  .amigo-item { display:flex; align-items:center; justify-content:space-between;
+    padding:10px 12px; border-radius:10px; background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.07); margin-bottom:6px; }
+  .amigo-info { display:flex; align-items:center; gap:10px; }
+  .amigo-avatar { font-size:22px; }
+  .amigo-nome  { font-size:14px; }
+  .amigo-status { font-size:11px; color:var(--cinza); }
+  .amigo-status.online { color:#4eff9a; }
+  .badge-pendente { font-size:10px; padding:2px 8px; border-radius:20px;
+    background:rgba(201,168,76,0.2); color:var(--dourado); }
+  .amigo-add-row { display:flex; gap:8px; margin-top:10px; }
+  .amigo-add-input { flex:1; padding:9px 12px; border-radius:8px;
+    border:1px solid rgba(201,168,76,0.3); background:rgba(255,255,255,0.07);
+    color:var(--branco); font-size:13px; font-family:'Georgia',serif; outline:none; }
+  .amigo-add-input:focus { border-color:var(--dourado); }
+
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
   ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 3px; }
@@ -346,6 +388,12 @@
     <div><div>2v2 Local</div><div class="desc">Quatro jogadores no mesmo dispositivo</div></div>
   </button>
 
+  <div class="menu-secao">👥 Social</div>
+  <button class="menu-btn" onclick="irTela('amigos');renderizarAmigos()">
+    <span class="icone">👥</span>
+    <div><div>Amigos</div><div class="desc">Adicione e veja seus amigos online</div></div>
+  </button>
+
   <div class="menu-secao">👤 Conta</div>
   <button class="menu-btn" onclick="irTela('perfil')">
     <span class="icone">👤</span>
@@ -356,6 +404,12 @@
     <div><div>Loja</div><div class="desc">Gaste suas moedas em itens exclusivos</div></div>
   </button>
 
+  <div id="btn-admin-menu" style="display:none;margin-top:6px">
+    <button class="menu-btn" onclick="irTela('admin')" style="border-color:rgba(168,85,247,0.4);background:rgba(168,85,247,0.08)">
+      <span class="icone">🛡️</span>
+      <div><div style="color:#d8b4fe">Painel Admin</div><div class="desc">Gerenciar moedas dos jogadores</div></div>
+    </button>
+  </div>
   <div class="menu-sair" onclick="sairConta()">Sair da conta</div>
 </div>
 
@@ -464,6 +518,64 @@
     <button class="btn"   id="btn-aceitar" onclick="aceitarTruco()" style="display:none">✅ Aceitar</button>
     <button class="btn p" id="btn-correr"  onclick="correrTruco()"  style="display:none">🏃 Correr</button>
     <button class="btn v"                  onclick="irMenu()">← Menu</button>
+  </div>
+</div>
+
+
+<!-- ADMIN -->
+<div id="tela-admin" class="tela">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:rgba(0,0,0,0.5);border-bottom:1px solid rgba(168,85,247,0.3)">
+    <span style="color:#d8b4fe;font-size:16px">🛡️ Painel Admin</span>
+    <button class="btn v" onclick="irMenu()">← Menu</button>
+  </div>
+  <div style="overflow-y:auto;flex:1;display:flex;align-items:flex-start;justify-content:center;padding:20px">
+    <div class="admin-card">
+      <div class="admin-titulo">💜 Painel do davi7</div>
+
+      <div style="font-size:12px;color:#a855f7;margin-bottom:14px;text-align:center">
+        Dar moedas para qualquer jogador
+      </div>
+
+      <label style="font-size:11px;color:#a855f7;text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:6px">Nome do jogador</label>
+      <input class="admin-input" id="admin-jogador" type="text" placeholder="nome do jogador" />
+
+      <label style="font-size:11px;color:#a855f7;text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:6px">Quantidade de moedas</label>
+      <input class="admin-input" id="admin-qtd" type="number" placeholder="ex: 500" min="1" />
+
+      <button class="admin-btn" onclick="adminDarMoedas()">🪙 Dar Moedas</button>
+      <div class="admin-log" id="admin-log"></div>
+
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(168,85,247,0.2)">
+        <div style="font-size:12px;color:#a855f7;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">Todos os jogadores</div>
+        <div id="admin-lista"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AMIGOS -->
+<div id="tela-amigos" class="tela">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:rgba(0,0,0,0.4);border-bottom:1px solid rgba(201,168,76,0.2)">
+    <span style="color:var(--dourado-cl);font-size:16px">👥 Amigos</span>
+    <button class="btn v" onclick="irMenu()">← Menu</button>
+  </div>
+  <div style="overflow-y:auto;flex:1;display:flex;align-items:flex-start;justify-content:center;padding:20px">
+    <div class="amigos-card">
+
+      <div class="amigos-secao">Adicionar amigo</div>
+      <div class="amigo-add-row">
+        <input class="amigo-add-input" id="amigo-input" placeholder="nome do jogador" />
+        <button class="btn d" onclick="enviarPedidoAmizade()">Adicionar</button>
+      </div>
+      <div id="amigo-msg" style="font-size:12px;margin-top:6px;min-height:16px"></div>
+
+      <div class="amigos-secao" id="sec-pendentes" style="display:none">Pedidos recebidos</div>
+      <div id="lista-pendentes"></div>
+
+      <div class="amigos-secao">Meus amigos</div>
+      <div id="lista-amigos"></div>
+
+    </div>
   </div>
 </div>
 
@@ -1187,3 +1299,339 @@ function setLog(txt)   { document.getElementById('log').textContent = txt; }
 </script>
 </body>
 </html>
+
+<script>
+// ══════════════════════════════════════════
+// ADMIN — só davi7 tem acesso
+// ══════════════════════════════════════════
+
+const ADMIN_USER = 'davi7';
+
+function verificarAdmin() {
+  const isAdmin = nomeJog === ADMIN_USER;
+  document.getElementById('btn-admin-menu').style.display = isAdmin ? 'block' : 'none';
+}
+
+function adminDarMoedas() {
+  const jogador = document.getElementById('admin-jogador').value.trim();
+  const qtd     = parseInt(document.getElementById('admin-qtd').value);
+  const log     = document.getElementById('admin-log');
+
+  if (!jogador) { log.textContent = '❌ Digite o nome do jogador.'; return; }
+  if (!qtd || qtd < 1) { log.textContent = '❌ Digite uma quantidade válida.'; return; }
+
+  const perfis = JSON.parse(localStorage.getItem('tp_perfis') || '{}');
+  if (!perfis[jogador]) { log.textContent = '❌ Jogador "' + jogador + '" não encontrado.'; return; }
+
+  perfis[jogador].moedas += qtd;
+  localStorage.setItem('tp_perfis', JSON.stringify(perfis));
+
+  log.style.color = '#4eff9a';
+  log.textContent = '✅ ' + qtd + ' moedas adicionadas para ' + jogador + '! Total: ' + perfis[jogador].moedas;
+  document.getElementById('admin-jogador').value = '';
+  document.getElementById('admin-qtd').value = '';
+
+  // Atualiza a lista
+  adminRenderizarLista();
+
+  // Se for o próprio davi7, atualiza o menu
+  if (jogador === nomeJog) atualizarMenuPerfil();
+}
+
+function adminRenderizarLista() {
+  const perfis  = JSON.parse(localStorage.getItem('tp_perfis') || '{}');
+  const lista   = document.getElementById('admin-lista');
+  lista.innerHTML = '';
+  const nomes = Object.keys(perfis);
+  if (nomes.length === 0) { lista.innerHTML = '<div style="font-size:12px;color:var(--cinza)">Nenhum jogador cadastrado ainda.</div>'; return; }
+  nomes.forEach(nome => {
+    const p = perfis[nome];
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:8px;background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.15);margin-bottom:6px;font-size:13px';
+    div.innerHTML = '<span>' + (p.avatarAtual || '🃏') + ' ' + nome + '</span><span style="color:#a855f7">🪙 ' + p.moedas + '</span>';
+    lista.appendChild(div);
+  });
+}
+
+// Sobrescreve o irTela original para incluir a lógica de admin
+const _irTelaOriginal = irTela;
+
+// ══════════════════════════════════════════
+// AMIGOS
+// ══════════════════════════════════════════
+
+// Estrutura de amigos salva no localStorage:
+// tp_amigos: { "jogador": { amigos: ["nome1","nome2"], pendentes: ["nome3"] } }
+
+function getDadosAmigos(nome) {
+  const todos = JSON.parse(localStorage.getItem('tp_amigos') || '{}');
+  if (!todos[nome]) todos[nome] = { amigos: [], pendentes: [] };
+  return todos;
+}
+
+function salvarAmigos(dados) {
+  localStorage.setItem('tp_amigos', JSON.stringify(dados));
+}
+
+function enviarPedidoAmizade() {
+  const alvo  = document.getElementById('amigo-input').value.trim();
+  const msg   = document.getElementById('amigo-msg');
+
+  if (!alvo) { exibirMsgAmigo('Digite um nome.', 'err'); return; }
+  if (alvo === nomeJog) { exibirMsgAmigo('Você não pode se adicionar.', 'err'); return; }
+
+  // Verifica se o jogador existe
+  const users = JSON.parse(localStorage.getItem('tp_users') || '{}');
+  if (!users[alvo]) { exibirMsgAmigo('Jogador "' + alvo + '" não encontrado.', 'err'); return; }
+
+  const dados = getDadosAmigos(nomeJog);
+  if (dados[nomeJog].amigos.includes(alvo)) { exibirMsgAmigo('Já são amigos!', 'err'); return; }
+  if (dados[nomeJog].pendentes.includes(alvo)) { exibirMsgAmigo('Você já recebeu um pedido de ' + alvo + '.', 'err'); return; }
+
+  // Adiciona nas pendentes do alvo
+  if (!dados[alvo]) dados[alvo] = { amigos: [], pendentes: [] };
+  if (!dados[alvo].pendentes.includes(nomeJog)) dados[alvo].pendentes.push(nomeJog);
+  salvarAmigos(dados);
+
+  document.getElementById('amigo-input').value = '';
+  exibirMsgAmigo('✅ Pedido enviado para ' + alvo + '!', 'ok');
+  renderizarAmigos();
+}
+
+function aceitarAmigo(nome) {
+  const dados = getDadosAmigos(nomeJog);
+  // Remove das pendentes
+  dados[nomeJog].pendentes = dados[nomeJog].pendentes.filter(n => n !== nome);
+  // Adiciona como amigo nos dois
+  if (!dados[nomeJog].amigos.includes(nome)) dados[nomeJog].amigos.push(nome);
+  if (!dados[nome])                           dados[nome] = { amigos: [], pendentes: [] };
+  if (!dados[nome].amigos.includes(nomeJog))  dados[nome].amigos.push(nomeJog);
+  salvarAmigos(dados);
+  renderizarAmigos();
+}
+
+function recusarAmigo(nome) {
+  const dados = getDadosAmigos(nomeJog);
+  dados[nomeJog].pendentes = dados[nomeJog].pendentes.filter(n => n !== nome);
+  salvarAmigos(dados);
+  renderizarAmigos();
+}
+
+function removerAmigo(nome) {
+  const dados = getDadosAmigos(nomeJog);
+  dados[nomeJog].amigos = dados[nomeJog].amigos.filter(n => n !== nome);
+  if (dados[nome]) dados[nome].amigos = dados[nome].amigos.filter(n => n !== nomeJog);
+  salvarAmigos(dados);
+  renderizarAmigos();
+}
+
+function exibirMsgAmigo(txt, tipo) {
+  const el = document.getElementById('amigo-msg');
+  el.textContent = txt;
+  el.style.color = tipo === 'ok' ? '#4eff9a' : '#ff7070';
+}
+
+function renderizarAmigos() {
+  const dados   = getDadosAmigos(nomeJog);
+  const perfis  = JSON.parse(localStorage.getItem('tp_perfis') || '{}');
+  const meusDados = dados[nomeJog];
+
+  // Pendentes
+  const secPend = document.getElementById('sec-pendentes');
+  const listaPend = document.getElementById('lista-pendentes');
+  listaPend.innerHTML = '';
+  if (meusDados.pendentes.length > 0) {
+    secPend.style.display = 'block';
+    meusDados.pendentes.forEach(nome => {
+      const p = perfis[nome] || {};
+      const div = document.createElement('div');
+      div.className = 'amigo-item';
+      div.innerHTML = `
+        <div class="amigo-info">
+          <div class="amigo-avatar">${p.avatarAtual || '🃏'}</div>
+          <div>
+            <div class="amigo-nome">${nome}</div>
+            <div class="amigo-status">Quer ser seu amigo</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn d" style="padding:5px 12px;font-size:12px" onclick="aceitarAmigo('${nome}')">✅</button>
+          <button class="btn p" style="padding:5px 12px;font-size:12px" onclick="recusarAmigo('${nome}')">❌</button>
+        </div>
+      `;
+      listaPend.appendChild(div);
+    });
+  } else {
+    secPend.style.display = 'none';
+  }
+
+  // Amigos
+  const listaEl = document.getElementById('lista-amigos');
+  listaEl.innerHTML = '';
+  if (meusDados.amigos.length === 0) {
+    listaEl.innerHTML = '<div style="font-size:13px;color:var(--cinza);font-style:italic">Você ainda não tem amigos adicionados.</div>';
+    return;
+  }
+  meusDados.amigos.forEach(nome => {
+    const p = perfis[nome] || {};
+    const div = document.createElement('div');
+    div.className = 'amigo-item';
+    div.innerHTML = `
+      <div class="amigo-info">
+        <div class="amigo-avatar">${p.avatarAtual || '🃏'}</div>
+        <div>
+          <div class="amigo-nome">${nome}</div>
+          <div class="amigo-status">${p.vitorias || 0} vitórias · 🪙 ${p.moedas || 0}</div>
+        </div>
+      </div>
+      <button class="btn v" style="padding:5px 12px;font-size:11px" onclick="removerAmigo('${nome}')">Remover</button>
+    `;
+    listaEl.appendChild(div);
+  });
+}
+
+// ══════════════════════════════════════════
+// BACK DO ADVERSÁRIO VISÍVEL NO ONLINE
+// Quando o servidor manda o estado, inclui o back do adversário.
+// Assim as cartas viradas do adversário mostram o back DELE.
+// ══════════════════════════════════════════
+
+function getBackPorId(backId) {
+  if (!backId || backId === 'padrao') return null;
+  const itens = [
+    { id:'back_azul',     back:'linear-gradient(135deg,#1a3a6c,#0a1a3a)' },
+    { id:'back_vermelho', back:'linear-gradient(135deg,#6c1a1a,#3a0a0a)' },
+    { id:'back_roxo',     back:'linear-gradient(135deg,#4a1a6c,#1a0a3a)' },
+    { id:'back_verde',    back:'linear-gradient(135deg,#0a4a1a,#042a0a)' },
+    { id:'back_ouro',     back:'linear-gradient(135deg,#6c4a0a,#3a2a00)' },
+    { id:'back_galaxy',   back:'linear-gradient(135deg,#0a0a3a,#1a0a4a)' },
+  ];
+  const item = itens.find(i => i.id === backId);
+  return item ? item.back : null;
+}
+
+// Back do adversário online (recebido via socket)
+let backAdversarioOnline = null;
+
+// Sobrescreve mkVirada para aceitar um back externo
+function mkViradaComBack(back) {
+  const div = document.createElement('div');
+  div.className = 'carta virada';
+  const bg = back || getBackAtual();
+  if (bg) div.style.background = bg;
+  div.textContent = '🂠';
+  return div;
+}
+
+// Envia o próprio back para o servidor quando entra na fila
+const _entrarFilaOriginal = entrarFilaOnline;
+function entrarFilaOnline() {
+  modoJogo = 'online'; formatoJogo = '1v1';
+  irTela('aguardando');
+  const p = getPerfil(nomeJog);
+  socket.emit('entrar_fila', { nome: nomeJog, backId: p.backAtual || 'padrao' });
+}
+
+// Recebe o back do adversário junto com o estado
+socket.on('estado_atualizado', (est) => {
+  if (modoJogo !== 'online') return;
+  if (est.backAdversario !== undefined) backAdversarioOnline = getBackPorId(est.backAdversario);
+  renderizarOnlineComBack(est);
+});
+
+function renderizarOnlineComBack(est) {
+  meuTime = est.meuTime;
+
+  document.getElementById('pts-t1').textContent     = est.pontos.t1;
+  document.getElementById('pts-t2').textContent     = est.pontos.t2;
+  document.getElementById('rod-t1').textContent     = est.rodGanhas.t1 > 0 ? '●'.repeat(est.rodGanhas.t1) : '—';
+  document.getElementById('rod-t2').textContent     = est.rodGanhas.t2 > 0 ? '●'.repeat(est.rodGanhas.t2) : '—';
+  document.getElementById('val-mao-pl').textContent = est.valMao + ' pt';
+  document.getElementById('info-val').textContent   = est.valMao;
+  document.getElementById('log').textContent        = est.log;
+  document.getElementById('topo-moedas').textContent = '🪙 ' + getPerfil(nomeJog).moedas;
+
+  const SIM = { O:'♦', E:'♠', C:'♥', P:'♣' };
+  const NAIPES = ['O','E','C','P'];
+  if (est.vira) {
+    document.getElementById('info-vira').textContent = est.vira.valor + SIM[est.vira.naipe];
+    const manStr = [...NAIPES].reverse().map(n => est.manilha + SIM[n]).join(' > ');
+    document.getElementById('info-man').textContent  = est.manilha + ' (' + manStr + ')';
+  }
+
+  const advTime  = meuTime === 't1' ? 't2' : 't1';
+  const nomeAdv  = est.nomes[advTime];
+  const nomeEu   = est.nomes[meuTime];
+  const minhaVez = est.turno === meuTime && !est.aguardandoTruco;
+
+  document.getElementById('label-jog').textContent = nomeEu + (minhaVez ? ' ◀' : '');
+  document.getElementById('label-jog').className   = 'area-label' + (minhaVez ? ' ativo' : '');
+  document.getElementById('label-adv').textContent = (est.turno === advTime ? '▶ ' : '') + nomeAdv;
+  document.getElementById('label-adv').className   = 'area-label' + (est.turno === advTime ? ' ativo' : '');
+
+  // Minhas cartas
+  const jogEl = document.getElementById('cartas-jog');
+  jogEl.innerHTML = '';
+  est.minhasCartas.forEach((carta, i) => {
+    jogEl.appendChild(mkCarta(carta, minhaVez, est.manilha,
+      minhaVez ? () => socket.emit('jogar_carta', { idx: i }) : null));
+  });
+
+  // Cartas do adversário com o back DELE
+  const advEl = document.getElementById('cartas-adv');
+  advEl.innerHTML = '';
+  for (let i = 0; i < est.qtdAdversario; i++) {
+    advEl.appendChild(mkViradaComBack(backAdversarioOnline));
+  }
+
+  // Mesa
+  const mesaEl = document.getElementById('mesa');
+  mesaEl.innerHTML = '';
+  est.mesa.forEach(m => {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'text-align:center';
+    const el = mkCarta(m.carta, false, est.manilha, null);
+    el.classList.add('inativa');
+    const lbl = document.createElement('div');
+    lbl.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.4);margin-top:4px';
+    lbl.textContent = est.nomes[m.time];
+    wrap.appendChild(el); wrap.appendChild(lbl);
+    mesaEl.appendChild(wrap);
+  });
+
+  const SEQ = ['nenhum','truco','seis','nove','doze'];
+  const NOM = { truco:'TRUCO', seis:'SEIS', nove:'NOVE', doze:'DOZE' };
+  const idx = SEQ.indexOf(est.estadoTruco);
+  const pode = idx < SEQ.length - 1 && !est.aguardandoTruco && minhaVez;
+  const euPediTruco   = est.aguardandoTruco && est.quemPediuTruco === meuTime;
+  const euRecebiTruco = est.aguardandoTruco && est.quemPediuTruco !== meuTime;
+
+  document.getElementById('btn-truco').disabled         = !pode;
+  document.getElementById('btn-truco').style.display    = est.aguardandoTruco ? 'none'         : 'inline-block';
+  document.getElementById('btn-aceitar').style.display  = euRecebiTruco       ? 'inline-block' : 'none';
+  document.getElementById('btn-correr').style.display   = euRecebiTruco       ? 'inline-block' : 'none';
+  if (euPediTruco) setLog('Aguardando resposta do adversário...');
+  if (pode) document.getElementById('btn-truco').textContent = NOM[SEQ[idx + 1]] + '!';
+
+  if (est.aguardandoMaoOnze && est.turno !== meuTime) {
+    const timeOnze = est.pontos.t1 === 11 ? 't1' : 't2';
+    abrirModal('🃏 Mão de Onze!', est.nomes[timeOnze] + ' tem 11 pontos. Você aceita jogar? (mão vale 3 pts)',
+      [{ label: '✅ Aceitar', acao: () => { fecharModal(); socket.emit('resposta_mao_onze', { aceita: true }); } },
+       { label: '❌ Recusar', acao: () => { fecharModal(); socket.emit('resposta_mao_onze', { aceita: false }); } }]);
+  }
+
+  if (est.fim) {
+    const venceu = est.vencedor === meuTime;
+    if (venceu) registrarVitoria(); else registrarDerrota();
+    abrirModal(venceu ? '🏆 Você venceu! +150 🪙' : '😢 Você perdeu! +50 🪙',
+      venceu ? 'Parabéns! +150 moedas (50 por jogar + 100 pela vitória).' : 'Não desanime! +50 moedas por participar.',
+      [{ label: 'Voltar ao menu', acao: irMenu }]);
+  }
+}
+
+// Inicializa admin quando entra no menu
+function inicializarAdmin() {
+  verificarAdmin();
+  if (nomeJog === ADMIN_USER) adminRenderizarLista();
+}
+</script>
