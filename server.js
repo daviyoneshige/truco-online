@@ -18,8 +18,9 @@ const filaEspera = [];
 io.on('connection', (socket) => {
   console.log('Conectou:', socket.id);
 
-  socket.on('entrar_fila', ({ nome }) => {
+  socket.on('entrar_fila', ({ nome, backId }) => {
     socket.nomeJogador = nome;
+    socket.backId = backId || 'padrao';
 
     if (filaEspera.length > 0) {
       const adversario = filaEspera.shift();
@@ -35,6 +36,8 @@ io.on('connection', (socket) => {
 
       // Cria o estado JÁ COM AS CARTAS DISTRIBUÍDAS
       const estado = criarEstadoInicial(adversario.nomeJogador, socket.nomeJogador);
+      estado.backT1 = adversario.backId || 'padrao';
+      estado.backT2 = socket.backId || 'padrao';
       salas.set(salaId, estado);
 
       io.to(salaId).emit('partida_iniciada', {
@@ -326,8 +329,9 @@ function enviarEstado(salaId) {
       s.emit('estado_atualizado', {
         ...base,
         meuTime,
-        minhasCartas:   sala.maos[meuTime],
-        qtdAdversario:  sala.maos[advTime].length,
+        minhasCartas:    sala.maos[meuTime],
+        qtdAdversario:   sala.maos[advTime].length,
+        backAdversario:  s.time === 't1' ? sala.backT2 : sala.backT1,
       });
     });
   });
