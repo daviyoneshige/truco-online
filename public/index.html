@@ -547,6 +547,27 @@ function adicionarMoedas(qtd) {
   if (!nomeJog) return;
   const p = getPerfil(nomeJog);
   p.moedas = Math.max(0, p.moedas + qtd);
+
+  // Socorro automático: sempre que zerar ganha 50 de presente
+  if (p.moedas === 0) {
+    p.moedas = 50;
+    salvarPerfil(nomeJog, p);
+    atualizarMenuPerfil();
+    const e1 = document.createElement('div');
+    e1.className = 'moeda-anim negativo';
+    e1.textContent = (qtd > 0 ? '+' : '') + qtd + ' 🪙';
+    document.body.appendChild(e1);
+    setTimeout(() => e1.remove(), 1800);
+    setTimeout(() => {
+      const e2 = document.createElement('div');
+      e2.className = 'moeda-anim positivo';
+      e2.textContent = '🎁 +50 Socorro!';
+      document.body.appendChild(e2);
+      setTimeout(() => e2.remove(), 2000);
+    }, 1000);
+    return;
+  }
+
   salvarPerfil(nomeJog, p);
   atualizarMenuPerfil();
 
@@ -563,7 +584,8 @@ function registrarVitoria() {
   const p = getPerfil(nomeJog);
   p.vitorias++;
   salvarPerfil(nomeJog, p);
-  adicionarMoedas(100);
+  // +50 por participar + +100 pelo resultado = +150 no total
+  adicionarMoedas(150);
 }
 
 function registrarDerrota() {
@@ -571,7 +593,8 @@ function registrarDerrota() {
   const p = getPerfil(nomeJog);
   p.derrotas++;
   salvarPerfil(nomeJog, p);
-  adicionarMoedas(-50);
+  // +50 só por participar — nunca perde moedas, só ganha mais devagar
+  adicionarMoedas(50);
 }
 
 function getBackAtual() {
@@ -879,8 +902,8 @@ function renderizarOnline(est) {
   if (est.fim) {
     const venceu = est.vencedor === meuTime;
     if (venceu) registrarVitoria(); else registrarDerrota();
-    abrirModal(venceu ? '🏆 Você venceu! +100 🪙' : '😢 Você perdeu! -50 🪙',
-      venceu ? 'Parabéns! +100 moedas adicionadas.' : 'Não desanime! -50 moedas.',
+    abrirModal(venceu ? '🏆 Você venceu! +150 🪙' : '😢 Você perdeu! +50 🪙',
+      venceu ? 'Parabéns! +150 moedas (50 por jogar + 100 pela vitória).' : 'Não desanime! +50 moedas por participar.',
       [{ label: 'Voltar ao menu', acao: irMenu }]);
   }
 }
@@ -1020,13 +1043,13 @@ function verificarFimJogoLocal() {
   const nomesT2 = formatoJogo==='1v1' ? nomesTimes.t2[0] : 'Time Vermelho';
   if (ptsT.t1>=12) {
     registrarVitoria();
-    abrirModal('🏆 Vitória! +100 🪙', nomesT1+' chegou a 12 pontos!',
+    abrirModal('🏆 Vitória! +150 🪙', nomesT1+' chegou a 12 pontos! +150 moedas.',
       [{label:'Jogar de novo', acao:() => { fecharModal(); ptsT={t1:0,t2:0}; idxAtual={t1:0,t2:0}; novaMaoLocal(); }}]);
     return true;
   }
   if (ptsT.t2>=12) {
     registrarDerrota();
-    abrirModal('😢 Derrota! -50 🪙', nomesT2+' chegou a 12 pontos.',
+    abrirModal('😢 Derrota! +50 🪙', nomesT2+' chegou a 12 pontos. +50 moedas por participar.',
       [{label:'Jogar de novo', acao:() => { fecharModal(); ptsT={t1:0,t2:0}; idxAtual={t1:0,t2:0}; novaMaoLocal(); }}]);
     return true;
   }
