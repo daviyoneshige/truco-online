@@ -889,6 +889,7 @@ function entrarComoLogado(nome) {
   atualizarMenuPerfil();
   document.getElementById('topo-moedas').textContent = '🪙 ' + getPerfil(nome).moedas;
   irTela('menu');
+  inicializarAdmin(); // mostra botão admin se for davi7
 }
 
 function sairConta() {
@@ -901,7 +902,18 @@ function sairConta() {
 }
 
 const jaLogado = localStorage.getItem('tp_logado');
-if (jaLogado) entrarComoLogado(jaLogado);
+if (jaLogado) {
+  nomeJog = jaLogado;
+  getPerfil(jaLogado);
+  atualizarMenuPerfil();
+  document.getElementById('topo-moedas').textContent = '🪙 ' + getPerfil(jaLogado).moedas;
+  irTela('menu');
+}
+
+// Roda APÓS todos os scripts carregarem — garante que inicializarAdmin existe
+window.addEventListener('load', () => {
+  if (nomeJog) inicializarAdmin();
+});
 
 // ══════════════════════════════════════════
 // MODO ONLINE
