@@ -429,11 +429,16 @@ function cancelarFila() {
 
 // Servidor encontrou um adversário — partida começou!
 socket.on('partida_iniciada', ({ nomeT1, nomeT2 }) => {
+  // IMPORTANTE: definir modoJogo ANTES de ir para a tela do jogo.
+  // Sem isso, quando o primeiro 'estado_atualizado' chegar, o guard
+  // "if (modoJogo !== 'online') return" bloqueava a renderização
+  // e as cartas nunca apareciam.
+  modoJogo = 'online';
+  meuTime  = nomeT1 === nomeJog ? 't1' : 't2';
+
   document.getElementById('topo-modo').textContent = '🌐 Online';
   document.getElementById('nome-t1').textContent   = nomeT1;
   document.getElementById('nome-t2').textContent   = nomeT2;
-  // Descobre qual time é o jogador local
-  meuTime = nomeT1 === nomeJog ? 't1' : 't2';
   irTela('jogo');
 });
 
@@ -516,11 +521,22 @@ function renderizarOnline(est) {
   const SEQ  = ['nenhum','truco','seis','nove','doze'];
   const NOM  = { truco:'TRUCO', seis:'SEIS', nove:'NOVE', doze:'DOZE' };
   const idx  = SEQ.indexOf(est.estadoTruco);
+
+  // Só pode pedir truco se for minha vez e ainda houver níveis disponíveis
   const pode = idx < SEQ.length - 1 && !est.aguardandoTruco && minhaVez;
+
+  // Bug 2 corrigido: quem pediu o truco NÃO vê os botões de aceitar/correr.
+  // Só o adversário (quem recebeu o truco) deve poder responder.
+  const euPediTruco = est.aguardandoTruco && est.quemPediuTruco === meuTime;
+  const euRecebiTruco = est.aguardandoTruco && est.quemPediuTruco !== meuTime;
+
   document.getElementById('btn-truco').disabled    = !pode;
-  document.getElementById('btn-truco').style.display   = est.aguardandoTruco ? 'none'        : 'inline-block';
-  document.getElementById('btn-aceitar').style.display = est.aguardandoTruco ? 'inline-block' : 'none';
-  document.getElementById('btn-correr').style.display  = est.aguardandoTruco ? 'inline-block' : 'none';
+  document.getElementById('btn-truco').style.display   = est.aguardandoTruco ? 'none'                      : 'inline-block';
+  document.getElementById('btn-aceitar').style.display = euRecebiTruco       ? 'inline-block'              : 'none';
+  document.getElementById('btn-correr').style.display  = euRecebiTruco       ? 'inline-block'              : 'none';
+
+  // Mensagem para quem pediu, enquanto aguarda resposta
+  if (euPediTruco) setLog('Aguardando resposta do adversário...');
   if (pode) document.getElementById('btn-truco').textContent = NOM[SEQ[idx + 1]] + '!';
 
   // Mão de onze
