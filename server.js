@@ -11,7 +11,7 @@ const io     = new Server(server, { cors: { origin: '*' } });
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const MONGO_URI = 'mongodb+srv://daviyoneshige_db_user:sRJsGVyhbZAocwsP@truco-online.57okzfa.mongodb.net/truco?retryWrites=true&w=majority&appName=truco-online';
+
 let db;
 
 MongoClient.connect(MONGO_URI)
