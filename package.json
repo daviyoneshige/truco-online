@@ -1,0 +1,12 @@
+{
+  "name": "truco-paulista-online",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": { "start": "node --tls-min-v1.0 server.js" },
+  "engines": { "node": "20.x" },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.6.1",
+    "mongodb": "^6.3.0"
+  }
+}
